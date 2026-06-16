@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Portal Porto Vale — Assistente IA</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<style>
+/* ─── RESET ─────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f0f2f5}
+
+/* ─── PORTAL SHELL ───────────────────────────────────── */
+.portal{min-height:100vh;background:#f0f2f5;position:relative}
+
+.navbar{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 28px;height:54px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo .logo-mark{width:36px;height:36px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+  border-radius:9px;display:flex;align-items:center;justify-content:center}
+.nav-logo .logo-mark i{font-size:19px;color:#fff}
+.nav-logo .brand{font-size:13px;font-weight:800;color:#1d4ed8;letter-spacing:.2px}
+.nav-logo .sub{font-size:10px;color:#9ca3af;letter-spacing:.6px;text-transform:uppercase;margin-top:1px}
+.nav-right{display:flex;align-items:center;gap:14px}
+.nav-status{display:flex;align-items:center;gap:5px;font-size:12px;color:#6b7280;
+  border:1px solid #e5e7eb;border-radius:20px;padding:4px 11px;background:#f9fafb}
+.dot-green{width:7px;height:7px;border-radius:50%;background:#22c55e;
+  box-shadow:0 0 0 2px rgba(34,197,94,.2)}
+.nav-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding:4px 8px;
+  border-radius:8px;transition:background .12s}
+.nav-user:hover{background:#f3f4f6}
+.nav-user .av{width:33px;height:33px;border-radius:50%;
+  background:linear-gradient(135deg,#1d4ed8,#60a5fa);
+  color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.nav-user .u-name{font-size:13px;font-weight:600;color:#111827}
+.nav-user .u-role{font-size:10.5px;color:#6b7280}
+
+.main-content{padding:32px 36px}
+.section-title{font-size:22px;font-weight:800;color:#111827;margin-bottom:3px}
+.section-sub{font-size:13px;color:#6b7280;margin-bottom:26px}
+.cat-label{font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:10px;margin-top:20px}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.tool-card{background:#fff;border:1px solid #e5e7eb;border-radius:11px;
+  padding:13px 15px;display:flex;align-items:center;gap:12px;cursor:pointer;
+  border-left:4px solid transparent;transition:box-shadow .15s,transform .12s}
+.tool-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);transform:translateY(-1px)}
+.icon-box{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0}
+.icon-box i{font-size:18px;color:#fff}
+.tc-name{font-size:13px;font-weight:600;color:#111827;margin-bottom:1px}
+.tc-desc{font-size:11px;color:#9ca3af}
+.ic-purple{background:#7c3aed}.ic-amber{background:#d97706}.ic-blue{background:#2563eb}
+.ic-green{background:#16a34a}.ic-navy{background:#1e3a5f}.ic-orange{background:#ea580c}
+.ic-teal{background:#0d9488}.ic-rose{background:#e11d48}.ic-sky{background:#0284c7}
+.bl-purple{border-left-color:#7c3aed}.bl-amber{border-left-color:#d97706}
+.bl-blue{border-left-color:#2563eb}.bl-green{border-left-color:#16a34a}
+.bl-navy{border-left-color:#1e3a5f}.bl-orange{border-left-color:#ea580c}
+.bl-teal{border-left-color:#0d9488}.bl-rose{border-left-color:#e11d48}
+.bl-sky{border-left-color:#0284c7}
+
+.portal-footer{text-align:center;padding:18px;color:#d1d5db;font-size:11px;
+  border-top:1px solid #e5e7eb;background:#f9fafb;margin-top:24px}
+
+/* ─── FAB ────────────────────────────────────────────── */
+.widget-root{position:fixed;bottom:24px;right:28px;z-index:9000;
+  display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.fab{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(29,78,216,.45);transition:transform .18s,box-shadow .18s;
+  position:relative}
+.fab:hover{transform:scale(1.08);box-shadow:0 8px 28px rgba(29,78,216,.55)}
+.fab i{font-size:24px;color:#fff;transition:all .22s}
+.fab-pulse{position:absolute;inset:0;border-radius:50%;background:rgba(29,78,216,.3);
+  animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.35);opacity:0}}
+.fab-badge{position:absolute;top:-2px;right:-2px;min-width:17px;height:17px;
+  background:#ef4444;border-radius:9px;border:2px solid #fff;display:none;
+  align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;padding:0 3px}
+.fab-badge.show{display:flex}
+
+/* ─── PANEL ──────────────────────────────────────────── */
+.chat-panel{
+  width:360px;background:#fff;border-radius:18px;overflow:hidden;
+  box-shadow:0 16px 50px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.05);
+  display:none;flex-direction:column;max-height:580px;
+  min-width:300px;min-height:380px;max-width:96vw;
+  resize:both;
+  transform:translateY(14px) scale(.97);opacity:0;
+  transition:transform .24s cubic-bezier(.34,1.56,.64,1),opacity .2s ease}
+.chat-panel.open{display:flex}
+.chat-panel.visible{transform:translateY(0) scale(1);opacity:1}
+.chat-panel.dragging{transition:none;cursor:grabbing}
+
+/* ─── PANEL HEADER ───────────────────────────────────── */
+.panel-header{
+  background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 60%,#3b82f6 100%);
+  padding:14px 16px;display:flex;align-items:center;gap:11px;flex-shrink:0;
+  position:relative;cursor:grab;user-select:none}
+.panel-header:active{cursor:grabbing}
+.ph-avatar{width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ph-avatar i{font-size:18px;color:#fff}
+.ph-info{flex:1}
+.ph-name{font-size:13.5px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px}
+.ph-name .badge-ia{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.3);
+  border-radius:4px;font-size:9px;font-weight:700;padding:1px 5px;letter-spacing:.5px}
+.ph-status{font-size:11px;color:rgba(255,255,255,.65);margin-top:2px;display:flex;align-items:center;gap:5px}
+.ph-dot{width:6px;height:6px;border-radius:50%;background:#4ade80}
+.ph-actions{display:flex;gap:4px}
+.ph-btn{background:rgba(255,255,255,.12);border:none;border-radius:7px;
+  width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:rgba(255,255,255,.8);font-size:15px;transition:all .12s}
+.ph-btn:hover{background:rgba(255,255,255,.25);color:#fff}
+
+/* ─── TABS ───────────────────────────────────────────── */
+.panel-tabs{display:flex;border-bottom:1px solid #f3f4f6;flex-shrink:0;background:#fff}
+.tab-btn{flex:1;padding:9px 0;font-size:12px;font-weight:600;color:#9ca3af;
+  border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;
+  transition:color .15s,border-color .15s;display:flex;align-items:center;
+  justify-content:center;gap:5px}
+.tab-btn.active{color:#1d4ed8;border-bottom-color:#1d4ed8}
+.tab-btn i{font-size:14px}
+
+/* ─── CHAT VIEW ──────────────────────────────────────── */
+.tab-view{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0}
+.tab-view.active{display:flex}
+
+.messages{flex:1;overflow-y:auto;padding:14px 13px 8px;display:flex;
+  flex-direction:column;gap:4px;scroll-behavior:smooth}
+.messages::-webkit-scrollbar{width:4px}
+.messages::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:10px}
+
+/* ─── MESSAGE BUBBLES ────────────────────────────────── */
+.msg-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:6px}
+.msg-row.user{flex-direction:row-reverse}
+.bot-av{width:27px;height:27px;border-radius:50%;
+  background:linear-gradient(135deg,#1d4ed8,#60a5fa);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bot-av i{font-size:13px;color:#fff}
+.msg-col{display:flex;flex-direction:column;gap:2px;max-width:80%}
+.msg-row.user .msg-col{align-items:flex-end}
+.bubble{padding:9px 12px;border-radius:16px;font-size:12.5px;line-height:1.6;
+  word-break:break-word;position:relative}
+.bubble.bot{background:#f3f4f6;color:#111827;border-bottom-left-radius:4px}
+.bubble.user{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border-bottom-right-radius:4px}
+.bubble.bot b,.bubble.bot strong{color:#111827;font-weight:700}
+.bubble.bot ul,.bubble.bot ol{padding-left:16px;margin:5px 0}
+.bubble.bot li{margin-bottom:3px}
+.msg-time{font-size:10px;color:#d1d5db;padding:0 4px}
+.msg-row.user .msg-time{text-align:right}
+
+/* typing dots */
+.typing-bub{padding:11px 14px}
+.dots{display:flex;gap:4px;align-items:center}
+.dots span{width:7px;height:7px;border-radius:50%;background:#9ca3af;animation:bounce .9s infinite}
+.dots span:nth-child(2){animation-delay:.18s}
+.dots span:nth-child(3){animation-delay:.36s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+
+/* ─── FEEDBACK ───────────────────────────────────────── */
+.feedback-row{display:flex;align-items:center;gap:7px;padding:0 4px 4px 35px}
+.feedback-row span{font-size:11px;color:#9ca3af}
+.fb-btn{background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;
+  padding:3px 9px;cursor:pointer;font-size:12px;transition:all .12s}
+.fb-btn:hover:not(:disabled){background:#f3f4f6;border-color:#d1d5db;transform:scale(1.1)}
+.fb-btn.yes{border-color:#bbf7d0;background:#f0fdf4}
+.fb-btn.no{border-color:#fecaca;background:#fef2f2}
+
+/* ─── ESCALATION CARD ────────────────────────────────── */
+.esc-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;
+  padding:13px 13px 11px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin:2px 0}
+.esc-label{font-size:11.5px;font-weight:700;color:#374151;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px}
+.esc-label i{color:#f59e0b;font-size:16px}
+.esc-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
+.esc-btn{padding:9px 8px;border-radius:10px;border:none;cursor:pointer;
+  font-size:11.5px;font-weight:600;display:flex;align-items:center;
+  justify-content:center;gap:6px;transition:all .14s}
+.esc-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.esc-btn.wa{background:#16a34a;color:#fff}
+.esc-btn.ticket{background:#1d4ed8;color:#fff}
+.esc-btn.new-chat{background:#f3f4f6;color:#374151;grid-column:1/-1;font-size:11px}
+.esc-btn i{font-size:14px}
+
+/* ─── SUGGESTIONS ────────────────────────────────────── */
+.suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:6px 13px 8px}
+.sug-chip{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;
+  font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;
+  cursor:pointer;white-space:nowrap;transition:all .12s}
+.sug-chip:hover{background:#dbeafe;transform:translateY(-1px)}
+
+/* ─── INPUT ──────────────────────────────────────────── */
+.chat-input-area{padding:9px 11px;border-top:1px solid #f3f4f6;
+  display:flex;gap:8px;align-items:flex-end;flex-shrink:0;background:#fff}
+.chat-input-area textarea{flex:1;background:#f9fafb;border:1.5px solid #e5e7eb;
+  border-radius:11px;padding:8px 12px;font-size:12.5px;color:#111827;
+  outline:none;resize:none;max-height:80px;line-height:1.45;
+  font-family:inherit;transition:border-color .15s,background .15s}
+.chat-input-area textarea:focus{border-color:#3b82f6;background:#fff}
+.chat-input-area textarea::placeholder{color:#9ca3af}
+.send-btn{width:37px;height:37px;min-width:37px;
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+  border:none;border-radius:10px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .14s;align-self:flex-end}
+.send-btn:hover:not(:disabled){filter:brightness(1.1);transform:scale(1.05)}
+.send-btn:disabled{background:#bfdbfe;cursor:default}
+.send-btn i{font-size:16px;color:#fff}
+
+.chat-footer{display:flex;align-items:center;justify-content:center;gap:5px;
+  padding:5px 12px 7px;flex-shrink:0}
+.chat-footer span{font-size:10px;color:#d1d5db}
+.chat-footer i{font-size:11px;color:#d1d5db}
+
+/* ─── ANALYTICS VIEW ─────────────────────────────────── */
+.an-export-bar{padding:10px 14px 0;flex-shrink:0;display:flex;justify-content:flex-end}
+.an-export-btn{background:#fff;border:1.5px solid #bfdbfe;color:#1d4ed8;font-size:11px;
+  font-weight:700;padding:6px 12px;border-radius:9px;cursor:pointer;
+  display:flex;align-items:center;gap:6px;transition:all .12s}
+.an-export-btn:hover{background:#eff6ff;transform:translateY(-1px)}
+.an-export-btn i{font-size:14px}
+.analytics-wrap{flex:1;overflow-y:auto;padding:16px 14px}
+.analytics-wrap::-webkit-scrollbar{width:4px}
+.analytics-wrap::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:10px}
+.an-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.an-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:13px 14px}
+.an-card.full{grid-column:1/-1}
+.an-val{font-size:26px;font-weight:800;color:#111827;line-height:1}
+.an-label{font-size:11px;color:#6b7280;margin-top:4px}
+.an-sub{font-size:11px;font-weight:600;margin-top:3px}
+.an-sub.green{color:#16a34a}.an-sub.blue{color:#2563eb}.an-sub.amber{color:#d97706}
+.an-title{font-size:12px;font-weight:700;color:#374151;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.an-title i{color:#6b7280;font-size:14px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bar-label{font-size:11px;color:#374151;width:110px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:7px;background:#f3f4f6;border-radius:10px;overflow:hidden}
+.bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#1d4ed8,#60a5fa);
+  transition:width .6s cubic-bezier(.4,0,.2,1)}
+.bar-count{font-size:11px;color:#6b7280;width:22px;text-align:right;flex-shrink:0}
+.donut-wrap{display:flex;align-items:center;gap:14px}
+.donut{position:relative;width:72px;height:72px;flex-shrink:0}
+.donut svg{transform:rotate(-90deg)}
+.donut-track{fill:none;stroke:#f3f4f6;stroke-width:8}
+.donut-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dasharray .7s ease}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center}
+.donut-pct{font-size:15px;font-weight:800;color:#111827}
+.donut-pct-label{font-size:9px;color:#9ca3af}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#374151;margin-bottom:5px}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.roi-highlight{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;
+  border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.roi-icon{width:38px;height:38px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.roi-icon i{font-size:20px;color:#fff}
+.roi-text .roi-val{font-size:20px;font-weight:800;color:#1d4ed8}
+.roi-text .roi-sub{font-size:11px;color:#3b82f6;margin-top:2px}
+.an-empty{text-align:center;padding:28px 0;color:#9ca3af;font-size:12px}
+.an-empty i{font-size:32px;display:block;margin-bottom:8px;opacity:.4}
+
+/* ─── KB EDITOR ──────────────────────────────────────── */
+.kb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;
+  display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.kb-overlay.open{display:flex}
+.kb-box{background:#fff;border-radius:18px;width:680px;max-width:94vw;
+  max-height:88vh;display:flex;flex-direction:column;
+  box-shadow:0 24px 60px rgba(0,0,0,.25);overflow:hidden}
+.kb-hd{padding:16px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:10px}
+.kb-hd h2{font-size:15px;font-weight:700;color:#111827;flex:1}
+.kb-hd-close{background:none;border:none;cursor:pointer;color:#9ca3af;
+  font-size:19px;display:flex;padding:3px;border-radius:6px;transition:all .12s}
+.kb-hd-close:hover{color:#374151;background:#f3f4f6}
+.kb-bd{flex:1;overflow-y:auto;padding:20px}
+.kb-info{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;
+  padding:12px 14px;margin-bottom:16px;font-size:12.5px;color:#1d4ed8;
+  display:flex;gap:8px;line-height:1.55}
+.kb-info i{font-size:16px;flex-shrink:0;margin-top:1px}
+.kb-textarea{width:100%;min-height:320px;border:1.5px solid #e5e7eb;border-radius:10px;
+  padding:12px 14px;font-size:12.5px;font-family:inherit;color:#111827;
+  line-height:1.65;resize:vertical;outline:none;transition:border-color .15s}
+.kb-textarea:focus{border-color:#3b82f6}
+.kb-ft{padding:13px 20px;border-top:1px solid #e5e7eb;display:flex;gap:9px;justify-content:flex-end}
+.kb-btn{padding:9px 18px;border-radius:9px;border:none;cursor:pointer;
+  font-size:13px;font-weight:600;transition:all .12s;display:flex;align-items:center;gap:6px}
+.kb-btn.save{background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff}
+.kb-btn.save:hover{filter:brightness(1.08)}
+.kb-btn.cancel{background:#f3f4f6;color:#374151}
+.kb-btn.cancel:hover{background:#e5e7eb}
+.kb-trigger-btn{position:fixed;bottom:26px;left:24px;background:#fff;border:1px solid #e5e7eb;
+  border-radius:11px;padding:8px 13px;cursor:pointer;display:flex;align-items:center;gap:7px;
+  font-size:11.5px;font-weight:600;color:#374151;box-shadow:0 2px 10px rgba(0,0,0,.09);
+  transition:all .14s;z-index:8000}
+.kb-trigger-btn:hover{box-shadow:0 4px 16px rgba(0,0,0,.13);transform:translateY(-1px)}
+.kb-trigger-btn i{color:#7c3aed;font-size:15px}
+.kb-dot{width:7px;height:7px;border-radius:50%;background:#7c3aed;margin-left:2px}
+
+/* ─── ADMIN TRIGGER ──────────────────────────────────── */
+.admin-trigger-btn{position:fixed;bottom:26px;left:24px;width:38px;height:38px;
+  background:#fff;border:1px solid #e5e7eb;border-radius:11px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,.09);transition:all .14s;z-index:8000}
+.admin-trigger-btn:hover{color:#374151;box-shadow:0 4px 16px rgba(0,0,0,.13);transform:translateY(-1px)}
+.admin-trigger-btn.hidden{display:none}
+
+/* ─── ADMIN BADGE ────────────────────────────────────── */
+.admin-badge{position:fixed;bottom:26px;left:24px;background:#111827;color:#fff;
+  border-radius:11px;padding:8px 10px 8px 13px;display:flex;align-items:center;gap:8px;
+  font-size:11.5px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:8000}
+.admin-badge i:first-child{color:#4ade80;font-size:15px}
+.admin-badge button{background:rgba(255,255,255,.12);border:none;border-radius:7px;
+  width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:rgba(255,255,255,.8);transition:all .12s;margin-left:2px}
+.admin-badge button:hover{background:rgba(255,255,255,.25);color:#fff}
+
+/* ─── LOGIN MODAL ────────────────────────────────────── */
+.login-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;
+  display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.login-overlay.open{display:flex}
+.login-box{background:#fff;border-radius:18px;width:340px;max-width:90vw;
+  padding:28px 26px 22px;box-shadow:0 24px 60px rgba(0,0,0,.25);text-align:center}
+.login-icon{width:50px;height:50px;border-radius:14px;margin:0 auto 14px;
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6);display:flex;align-items:center;
+  justify-content:center}
+.login-icon i{font-size:24px;color:#fff}
+.login-box h2{font-size:16px;font-weight:700;color:#111827;margin-bottom:5px}
+.login-sub{font-size:12px;color:#9ca3af;margin-bottom:18px;line-height:1.5}
+.login-field{text-align:left;margin-bottom:12px}
+.login-field label{font-size:11.5px;font-weight:600;color:#374151;margin-bottom:5px;display:block}
+.login-field input{width:100%;border:1.5px solid #e5e7eb;border-radius:9px;padding:9px 12px;
+  font-size:13px;outline:none;transition:border-color .15s;font-family:inherit}
+.login-field input:focus{border-color:#3b82f6}
+.login-error{color:#dc2626;font-size:11.5px;text-align:left;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.login-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:6px}
+
+/* ─── NPS ────────────────────────────────────────────── */
+.nps-scale{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;margin-top:6px}
+.nps-num{aspect-ratio:1;border:1.5px solid #e5e7eb;border-radius:8px;background:#fff;
+  cursor:pointer;font-size:12px;font-weight:700;color:#374151;display:flex;
+  align-items:center;justify-content:center;transition:all .12s}
+.nps-num:hover{border-color:#3b82f6;background:#eff6ff}
+.nps-num.selected{background:#1d4ed8;border-color:#1d4ed8;color:#fff;transform:scale(1.1)}
+.nps-num.low.selected{background:#dc2626;border-color:#dc2626}
+.nps-num.mid.selected{background:#d97706;border-color:#d97706}
+.nps-num.high.selected{background:#16a34a;border-color:#16a34a}
+.nps-labels{display:flex;justify-content:space-between;font-size:9.5px;color:#9ca3af;margin-top:6px}
+.nps-thanks{padding:8px 0 4px;text-align:center}
+.nps-thanks i{font-size:38px;color:#16a34a;margin-bottom:8px;display:block}
+.nps-thanks p{font-size:13px;color:#374151;font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- ═══════ PORTAL SHELL ═══════ -->
+<div class="portal">
+  <nav class="navbar">
+    <div class="nav-logo">
+      <div class="logo-mark"><i class="ti ti-question-mark"></i></div>
+      <div><div class="brand">PORTO VALE</div><div class="sub">Portal do Corretor</div></div>
+    </div>
+    <div class="nav-right">
+      <div class="nav-status"><div class="dot-green"></div>Sistema operacional</div>
+      <div class="nav-user">
+        <div class="av">MP</div>
+        <div><div class="u-name">Mayara Paulino</div><div class="u-role">Atendente GRE</div></div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <div class="section-title">Ferramentas</div>
+    <div class="section-sub">Selecione uma ferramenta para continuar.</div>
+    <div class="cat-label">Geral</div>
+    <div class="tools-grid">
+      <div class="tool-card bl-purple"><div class="icon-box ic-purple"><i class="ti ti-trophy"></i></div><div><div class="tc-name">Rankings</div><div class="tc-desc">Acesse os rankings de desempenho.</div></div></div>
+      <div class="tool-card bl-amber"><div class="icon-box ic-amber"><i class="ti ti-speakerphone"></i></div><div><div class="tc-name">Mural de Avisos - GRE</div><div class="tc-desc">Veja os últimos avisos e comunicados.</div></div></div>
+      <div class="tool-card bl-blue"><div class="icon-box ic-blue"><i class="ti ti-ticket"></i></div><div><div class="tc-name">Novo ticket - GRE</div><div class="tc-desc">Abra um novo chamado para o suporte.</div></div></div>
+      <div class="tool-card bl-green"><div class="icon-box ic-green"><i class="ti ti-refresh"></i></div><div><div class="tc-name">Acompanhar Solicitação</div><div class="tc-desc">Acompanhe o andamento dos seus tickets.</div></div></div>
+      <div class="tool-card bl-navy"><div class="icon-box ic-navy"><i class="ti ti-school"></i></div><div><div class="tc-name">Inscrições ABAC</div><div class="tc-desc">Inscrição para certificação PCA-10.</div></div></div>
+      <div class="tool-card bl-orange"><div class="icon-box ic-orange"><i class="ti ti-file-invoice"></i></div><div><div class="tc-name">Pedido de Compras</div><div class="tc-desc">Solicitar uma compra institucional.</div></div></div>
+      <div class="tool-card bl-rose"><div class="icon-box ic-rose"><i class="ti ti-shopping-bag"></i></div><div><div class="tc-name">Lead Store</div><div class="tc-desc">Compre produtos institucionais.</div></div></div>
+      <div class="tool-card bl-sky"><div class="icon-box ic-sky"><i class="ti ti-device-desktop"></i></div><div><div class="tc-name">Chamado TI & Manutenção</div><div class="tc-desc">Abra um chamado para TI ou Manutenção.</div></div></div>
+    </div>
+    <div class="cat-label" style="margin-top:22px">Seguros</div>
+    <div class="tools-grid">
+      <div class="tool-card bl-teal"><div class="icon-box ic-teal"><i class="ti ti-users"></i></div><div><div class="tc-name">Indicação de Leads - Seguros</div><div class="tc-desc">Indique leads para a equipe.</div></div></div>
+    </div>
+    <div class="cat-label" style="margin-top:22px">Administrativo</div>
+    <div class="tools-grid">
+      <div class="tool-card bl-orange"><div class="icon-box ic-orange"><i class="ti ti-folder"></i></div><div><div class="tc-name">Documentos</div><div class="tc-desc">Acesse os documentos da empresa.</div></div></div>
+      <div class="tool-card bl-navy"><div class="icon-box ic-navy"><i class="ti ti-headset"></i></div><div><div class="tc-name">Painel de Suporte - GRE</div><div class="tc-desc">Gerencie os tickets de suporte.</div></div></div>
+      <div class="tool-card bl-teal"><div class="icon-box ic-teal"><i class="ti ti-clipboard-check"></i></div><div><div class="tc-name">Painel de Pós-Contemplação</div><div class="tc-desc">Gerencie os tickets de pós-contemplação.</div></div></div>
+    </div>
+  </div>
+  <div class="portal-footer">Tecnologia · Porto Vale</div>
+</div>
+
+<!-- ═══════ CHATBOT WIDGET ═══════ -->
+<div class="widget-root">
+  <div class="chat-panel" id="chat-panel">
+
+    <!-- Header -->
+    <div class="panel-header">
+      <div class="ph-avatar"><i class="ti ti-question-mark"></i></div>
+      <div class="ph-info">
+        <div class="ph-name">Lead <span class="badge-ia">IA</span></div>
+        <div class="ph-status"><div class="ph-dot"></div>Online · responde em segundos</div>
+      </div>
+      <div class="ph-actions">
+        <button class="ph-btn" id="btn-download" title="Baixar conversa (PDF)"><i class="ti ti-download"></i></button>
+        <button class="ph-btn" id="btn-new" title="Nova conversa"><i class="ti ti-refresh"></i></button>
+        <button class="ph-btn" id="btn-close" title="Fechar"><i class="ti ti-x"></i></button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="panel-tabs" id="panel-tabs">
+      <button class="tab-btn active" data-tab="chat"><i class="ti ti-message"></i>Assistente</button>
+      <button class="tab-btn admin-only" data-tab="analytics" style="display:none"><i class="ti ti-chart-bar"></i>Painel de Impacto</button>
+    </div>
+
+    <!-- Chat view -->
+    <div class="tab-view active" id="tab-chat">
+      <div class="messages" id="messages"></div>
+      <div class="suggestions" id="suggestions">
+        <div class="sug-chip" data-q="Como abro um ticket?">🎫 Abrir ticket</div>
+        <div class="sug-chip" data-q="Como verifico pendências do dia?">📋 Pendências</div>
+        <div class="sug-chip" data-q="Como funciona a ABAC?">🎓 ABAC</div>
+        <div class="sug-chip" data-q="Como cancelo uma proposta?">📄 Proposta</div>
+        <div class="sug-chip" data-q="Como solicito suporte de TI?">💻 TI</div>
+      </div>
+      <div class="chat-input-area">
+        <textarea id="msg-input" placeholder="Digite sua dúvida…" rows="1"></textarea>
+        <button class="send-btn" id="send-btn" disabled><i class="ti ti-send"></i></button>
+      </div>
+      <div class="chat-footer">
+        <i class="ti ti-lock"></i>
+        <span>Lead IA · Porto Vale Consórcio</span>
+      </div>
+    </div>
+
+    <!-- Analytics view -->
+    <div class="tab-view" id="tab-analytics">
+      <div class="an-export-bar">
+        <button class="an-export-btn" id="btn-export-analytics"><i class="ti ti-file-download"></i>Exportar painel (PDF)</button>
+      </div>
+      <div class="analytics-wrap" id="analytics-wrap"></div>
+    </div>
+
+  </div>
+
+  <button class="fab" id="fab">
+    <div class="fab-pulse" id="fab-pulse"></div>
+    <i class="ti ti-question-mark" id="fab-icon"></i>
+    <div class="fab-badge" id="fab-badge">1</div>
+  </button>
+</div>
+
+<!-- ═══════ KB EDITOR ═══════ -->
+<div class="kb-overlay" id="kb-overlay">
+  <div class="kb-box">
+    <div class="kb-hd">
+      <i class="ti ti-database" style="color:#7c3aed;font-size:20px"></i>
+      <h2>Base de Conhecimento — Lead IA</h2>
+      <button class="kb-hd-close" id="kb-close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="kb-bd">
+      <div class="kb-info">
+        <i class="ti ti-info-circle"></i>
+        <div>Use o formato <strong>P: pergunta</strong> e <strong>R: resposta</strong> em linhas separadas. O assistente aprende com este conteúdo automaticamente. Dúvidas fora da base são encaminhadas para a equipe.</div>
+      </div>
+      <textarea class="kb-textarea" id="kb-textarea" spellcheck="false"></textarea>
+    </div>
+    <div class="kb-ft">
+      <button class="kb-btn cancel" id="kb-cancel">Cancelar</button>
+      <button class="kb-btn save" id="kb-save"><i class="ti ti-device-floppy"></i>Salvar base</button>
+    </div>
+  </div>
+</div>
+
+<button class="kb-trigger-btn admin-only" id="kb-trigger" style="display:none">
+  <i class="ti ti-database"></i>
+  Editar base de conhecimento
+  <div class="kb-dot"></div>
+</button>
+
+<!-- ═══════ ADMIN LOGIN TRIGGER ═══════ -->
+<button class="admin-trigger-btn" id="admin-trigger" title="Acesso administrativo">
+  <i class="ti ti-lock"></i>
+</button>
+
+<!-- ═══════ ADMIN LOGIN MODAL ═══════ -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-icon"><i class="ti ti-shield-lock"></i></div>
+    <h2>Acesso Administrativo</h2>
+    <p class="login-sub">Entre com suas credenciais para acessar o painel de gestão.</p>
+    <div class="login-field">
+      <label>E-mail</label>
+      <input type="email" id="login-user" placeholder="seu@email.com" autocomplete="email"/>
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <div class="login-error" id="login-error" style="display:none">Usuário ou senha incorretos.</div>
+    <div class="login-actions">
+      <button class="kb-btn cancel" id="login-cancel">Cancelar</button>
+      <button class="kb-btn save" id="login-submit"><i class="ti ti-login"></i>Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ ADMIN BADGE (shown when logged in) ═══════ -->
+<div class="admin-badge" id="admin-badge" style="display:none">
+  <i class="ti ti-shield-check"></i>
+  <span>Modo Admin</span>
+  <button id="admin-logout" title="Sair do modo admin"><i class="ti ti-logout"></i></button>
+</div>
+
+<!-- ═══════ NPS MODAL ═══════ -->
+<div class="login-overlay" id="nps-overlay">
+  <div class="login-box" style="width:360px">
+    <div class="login-icon" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><i class="ti ti-star"></i></div>
+    <h2 id="nps-title">Antes de você ir…</h2>
+    <p class="login-sub">Quanto o chat te ajudou hoje?</p>
+    <div class="nps-scale" id="nps-scale"></div>
+    <div class="nps-labels"><span>Nada útil</span><span>Extremamente útil</span></div>
+    <div class="login-actions" style="margin-top:16px;justify-content:space-between">
+      <button class="kb-btn cancel" id="nps-skip">Pular</button>
+      <button class="kb-btn save" id="nps-submit" disabled>Enviar avaliação</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════
+const AGENT_NAME   = 'Lead';
+const WHATSAPP_TEAM = [
+  { name:'Mayara', num:'551236002689' },
+  { name:'Luana',  num:'551236003504' },
+];
+const WHATSAPP_MSG = 'Olá! Preciso de ajuda com o Portal Porto Vale.';
+const TICKET_URL   = 'https://portal.portovaleconsorcio.com.br/';
+
+// URL do Web App publicado no Google Apps Script (proxy da IA)
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbybL7t8RhP1IYOkHVg8KZiUCjCXWsF0cpZX5A43eicCv9pv3jS856RStl9LGAQJIZb9/exec';
+
+// Firebase Authentication (login de admin)
+const firebaseConfig = {
+  apiKey: "AIzaSyDYZEBOuAZGsgUJICI5A1IoW50Ik041h_A",
+  authDomain: "porto-vale-chatbot.firebaseapp.com",
+  projectId: "porto-vale-chatbot",
+  storageBucket: "porto-vale-chatbot.firebasestorage.app",
+  messagingSenderId: "325924321529",
+  appId: "1:325924321529:web:8583e5e3b97a4023d48a28"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+const DEFAULT_KB = `
+P: Como verifico as pendências do dia?
+R: Verifique os prazos de tratativa e solicite retorno aos gerentes dentro do limite. Filtre o campo de "não identificadas" diariamente para verificar se alguma proposta foi identificada. Caso não respondam no prazo, cobre via grupo de pendências.
+
+P: Como cancelo uma proposta?
+R: O cancelamento de propostas é feito a pedido do gerente. Após o cancelamento, retire a proposta do sistema e, se necessário, transmita uma nova proposta em substituição — sempre atualize no sistema.
+
+P: Como funciona a solicitação de boletos e extratos?
+R: Solicitações de boletos, extratos e dúvidas de parcelas chegam via gestão de carteira. Faça a simulação de aumento de crédito, esclareça dúvidas sobre valores divergentes e envie o informe de rendimento pela central.
+
+P: Como abro um ticket no portal?
+R: Acesse "Ferramentas" > "Novo ticket - GRE", preencha título, descrição e prioridade e clique em "Criar". Você receberá um número de protocolo por e-mail.
+
+P: Como acompanho um ticket aberto?
+R: Acesse "Acompanhar Solicitação" no portal. Você verá todos os tickets com filtros de status: Aberto, Em andamento e Resolvido.
+
+P: Como funciona a inscrição na ABAC?
+R: Receba o pedido do gerente, repasse as regras antes de inscrever. Somente após aprovação gere a matrícula. Envie a documentação e agende a prova conforme disponibilidade. Avise o DP para cobrança e insira na planilha de controle.
+
+P: O que faço quando um vendedor tem intercorrência na ABAC (atestado, afastamento, desligamento)?
+R: Toda intercorrência durante o processo da ABAC deve ser tratada diretamente com você como responsável. Acione o gerente e o DP conforme necessário.
+
+P: Como cadastro um novo colaborador no corretor online?
+R: O cadastro é feito no sistema Corretor Online. Na ausência do aprendiz, a analista realiza o cadastro. Também é necessário bloquear o acesso de colaboradores desligados.
+
+P: Como funciona o Mural de Avisos - GRE?
+R: O Mural é gerenciado com comunicados gerados pela Porto: atualizações, tutoriais, avisos, campanhas e tabelas de grupos. Acesse em "Ferramentas" > "Mural de Avisos - GRE".
+
+P: Como funciona o atendimento pelo WhatsApp?
+R: Responda toda a demanda que chega no WhatsApp por ordem de chegada (do mais antigo ao mais recente) e direcione aos canais corretos.
+
+P: Como verifico o status de uma cota?
+R: Verifique o status da cota quando solicitado — se está alocada, cancelada ou com pagamento efetuado. Se necessário, acompanhe o fluxo de transferência de titularidade na esteira.
+
+P: Como faço pedido de compras de materiais de trabalho?
+R: Acesse "Ferramentas" > "Pedido de Compras" no portal. Gere o pedido para celulares, acessórios (suportes, fones, itens de ergonomia) e demais materiais necessários.
+
+P: Como solicito suporte de TI?
+R: Acesse "Ferramentas" > "Chamado TI e Manutenção" para abrir um chamado. A TI cuida de geração de ramais, números de WhatsApp, usuários e senhas de acesso.
+
+P: O que a TI resolve?
+R: A TI atende chamados sobre: acesso e senha de sistemas, configuração de ramais e telefonia, problemas de internet/rede, instalação de programas, manutenção de computadores e periféricos, e cadastro de número de WhatsApp corporativo. Abra o chamado em "Ferramentas" > "Chamado TI e Manutenção" detalhando o problema.
+
+P: Meu computador ou sistema está com problema técnico, o que faço?
+R: Abra um chamado em "Ferramentas" > "Chamado TI e Manutenção", descrevendo o problema (ex: tela travando, sistema lento, erro ao abrir). A equipe de TI responde por ordem de prioridade.
+
+P: Como transmito uma proposta ou reenvio o link de assinatura?
+R: A transmissão de propostas e reenvio de link de assinatura/contrato são feitos diretamente no sistema. Sempre substitua a proposta no sistema após qualquer alteração.
+
+P: Como faço o fechamento de tratativas do departamento?
+R: O fechamento de tratativas é feito periodicamente. Sinalize nos grupos de pendências as tratativas necessárias para as propostas identificadas das superintendências: LOTUS, Atena, Fênix, Anjos, Groove e Diamantes.
+
+P: Como falo com um atendente de verdade / pessoa da equipe?
+R: Se preferir falar diretamente com a equipe, você pode usar os botões de WhatsApp ou Abrir Ticket que aparecem no chat — assim que eu não conseguir resolver, ou se você quiser pular direto para um humano, é só pedir!
+`.trim();
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let kb          = localStorage.getItem('pv_kb') || DEFAULT_KB;
+let waIndex     = parseInt(localStorage.getItem('pv_wa_idx') || '0');
+let panelOpen   = false;
+let isTyping    = false;
+let history     = [];   // {role, content}
+let clarifyTry  = 0;
+let escalated   = false;
+let msgCount    = 0;
+let userName    = '';
+let awaitingName = false;
+let isAdmin      = false; // definido via firebase.auth().onAuthStateChanged abaixo
+let npsScore     = null;
+
+// Analytics state (persisted)
+let analytics = JSON.parse(localStorage.getItem('pv_analytics') || JSON.stringify({
+  totalSessions: 0,
+  resolved: 0,
+  escalated: 0,
+  clarifications: 0,
+  topics: {},   // topic -> count
+  sessions: [],  // [{date, resolved, escalated, msgs}]
+  npsScores: []  // [{date, score}]
+}));
+// Blindagem: garante que todos os campos existem mesmo se o localStorage
+// tiver uma versão antiga salva (sem npsScores, por exemplo)
+analytics.totalSessions   = analytics.totalSessions   ?? 0;
+analytics.resolved        = analytics.resolved        ?? 0;
+analytics.escalated       = analytics.escalated       ?? 0;
+analytics.clarifications  = analytics.clarifications  ?? 0;
+analytics.topics          = analytics.topics          ?? {};
+analytics.sessions        = analytics.sessions        ?? [];
+analytics.npsScores       = analytics.npsScores       ?? [];
+let sessionStart = null;
+let sessionResolved = 0, sessionEscalated = 0, sessionMsgs = 0;
+
+// ══════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const msgBox    = $('messages');
+const sugWrap   = $('suggestions');
+const msgInput  = $('msg-input');
+const sendBtn   = $('send-btn');
+
+function timeNow(){
+  return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+function scrollEnd(){
+  setTimeout(()=>msgBox.scrollTop=msgBox.scrollHeight, 50);
+}
+function saveAnalytics(){
+  localStorage.setItem('pv_analytics', JSON.stringify(analytics));
+}
+
+// ══════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════
+function addMsg(role, html, extras={}){
+  const row = document.createElement('div');
+  row.className = `msg-row ${role}`;
+
+  if(role === 'bot'){
+    const av = document.createElement('div');
+    av.className = 'bot-av';
+    av.innerHTML = '<i class="ti ti-question-mark"></i>';
+    row.appendChild(av);
+  }
+
+  const col = document.createElement('div');
+  col.className = 'msg-col';
+
+  const bub = document.createElement('div');
+  bub.className = `bubble ${role}`;
+
+  if(extras.typing){
+    bub.classList.add('typing-bub');
+    bub.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+  } else {
+    bub.innerHTML = html;
+  }
+  col.appendChild(bub);
+
+  if(!extras.typing && !extras.noTime){
+    const t = document.createElement('div');
+    t.className = 'msg-time';
+    t.textContent = timeNow();
+    col.appendChild(t);
+  }
+
+  row.appendChild(col);
+  msgBox.appendChild(row);
+  scrollEnd();
+  return {row, bub, col};
+}
+
+function formatReply(text){
+  // Convert **bold**, *italic*, numbered lists, bullet lists
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/^(\d+)\.\s(.+)$/gm, '<li>$2</li>')
+    .replace(/^[-•]\s(.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+}
+
+function addFeedback(){
+  const fbId = 'fb' + Date.now();
+  const row = document.createElement('div');
+  row.className = 'feedback-row';
+  row.id = fbId;
+  row.innerHTML = `<span>Isso resolveu?</span>
+    <button class="fb-btn" id="${fbId}-y">👍</button>
+    <button class="fb-btn" id="${fbId}-n">👎</button>`;
+  msgBox.appendChild(row);
+  scrollEnd();
+
+  $(fbId+'-y').onclick = function(){
+    this.classList.add('yes'); this.disabled = true;
+    $(fbId+'-n').disabled = true;
+    row.querySelector('span').textContent = 'Ótimo! 😊';
+    clarifyTry = 0;
+    sessionResolved++;
+    analytics.resolved++;
+    saveAnalytics();
+  };
+  $(fbId+'-n').onclick = function(){
+    this.classList.add('no'); this.disabled = true;
+    $(fbId+'-y').disabled = true;
+    row.querySelector('span').textContent = 'Entendido…';
+    retryOrEscalate();
+  };
+}
+
+function showEscalation(){
+  if(escalated) return;
+  escalated = true;
+  sessionEscalated++;
+  analytics.escalated++;
+  saveAnalytics();
+
+  const {bub} = addMsg('bot', '', {noTime:true});
+  bub.classList.remove('bubble');
+  bub.innerHTML = `
+    <div class="esc-card">
+      <div class="esc-label"><i class="ti ti-headset"></i> Falar com a equipe agora</div>
+      <div class="esc-grid">
+        <button class="esc-btn wa" onclick="doWhatsApp()">
+          <i class="ti ti-brand-whatsapp"></i> WhatsApp
+        </button>
+        <button class="esc-btn ticket" onclick="doTicket()">
+          <i class="ti ti-ticket"></i> Abrir ticket
+        </button>
+        <button class="esc-btn new-chat" onclick="newChat()">
+          <i class="ti ti-refresh"></i> Iniciar nova conversa
+        </button>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════
+//  CONVERSATION LOGIC
+// ══════════════════════════════════════════════
+async function typedMsg(html){
+  return new Promise(resolve => {
+    const {row} = addMsg('bot','',{typing:true, noTime:true});
+    const delay = Math.min(700 + html.replace(/<[^>]+>/g,'').length * 12, 2400);
+    setTimeout(()=>{
+      row.remove();
+      addMsg('bot', html);
+      resolve();
+    }, delay);
+  });
+}
+
+async function retryOrEscalate(){
+  clarifyTry++;
+  analytics.clarifications++;
+  saveAnalytics();
+  const who = userName ? `, ${userName}` : '';
+  if(clarifyTry >= 2){
+    await typedMsg(`Parece que não consigo resolver isso por aqui${who}. 😕<br>Vou te conectar com a equipe:`);
+    showEscalation();
+    return;
+  }
+  const probes = [
+    `Pode me contar com mais detalhes${who}? Em qual parte do portal isso acontece?`,
+    'Me dá um pouco mais de contexto — é sobre ticket, proposta, ABAC, ou outro assunto?',
+    `Qual o erro ou situação exata que está encontrando${who}? Assim consigo te ajudar melhor. 🙂`,
+  ];
+  await typedMsg(probes[clarifyTry % probes.length]);
+}
+
+// Mapa de sinônimos / termos do dia a dia → temas da base de conhecimento.
+// Ajuda a IA a entender o jeito que o atendente realmente fala, não só o termo técnico.
+const SYNONYM_MAP = {
+  'atendente': ['suporte', 'equipe', 'humano', 'pessoa', 'falar com alguém', 'WhatsApp', 'ticket'],
+  'suporte': ['ticket', 'TI', 'atendente', 'ajuda', 'chamado'],
+  'humano': ['atendente', 'equipe', 'WhatsApp', 'falar com alguém'],
+  'pessoa real': ['atendente', 'equipe', 'WhatsApp'],
+  'falar com alguém': ['atendente', 'WhatsApp', 'equipe'],
+  'chamado': ['ticket', 'TI', 'suporte'],
+  'erro': ['TI', 'problema técnico', 'chamado'],
+  'travou': ['TI', 'problema técnico'],
+  'lento': ['TI', 'problema técnico'],
+  'não funciona': ['TI', 'problema técnico', 'chamado'],
+  'pagamento': ['boleto', 'extrato', 'comissão'],
+  'dinheiro': ['comissão', 'pagamento', 'extrato'],
+  'nota': ['faturamento', 'nota fiscal'],
+  'acesso': ['login', 'senha'],
+  'senha': ['login', 'acesso'],
+  'curso': ['ABAC', 'certificação'],
+  'prova': ['ABAC', 'certificação'],
+  'cliente': ['cadastro de cliente', 'colaborador'],
+  'aviso': ['mural', 'comunicado'],
+  'comunicado': ['mural', 'aviso'],
+};
+
+function expandKeywords(text){
+  const lower = text.toLowerCase();
+  const matched = new Set();
+  Object.entries(SYNONYM_MAP).forEach(([term, related]) => {
+    if(lower.includes(term)){
+      related.forEach(r => matched.add(r));
+    }
+  });
+  return [...matched];
+}
+
+async function callClaude(userMsg){
+  const expandedTerms = expandKeywords(userMsg);
+  const systemPrompt = `Você é "${AGENT_NAME}", assistente virtual inteligente do Portal Porto Vale — portal interno para atendentes e corretores de consórcios.
+
+${userName ? `O nome da pessoa com quem você está falando é "${userName}". Trate-a pelo nome de forma natural — não em toda mensagem, mas o suficiente para parecer pessoal (ex: ao saudar, ao confirmar algo importante, ou ao encerrar).` : ''}
+
+GLOSSÁRIO IMPORTANTE: "GRE" é o nome do DEPARTAMENTO/SETOR de suporte e gestão (não é uma pessoa). Sempre trate como departamento: diga "o GRE", "a equipe do GRE", "o setor GRE" — nunca "seu GRE" ou qualquer construção que sugira que é uma pessoa específica.
+
+PERSONALIDADE: Amigável, direto, profissional. Português brasileiro. Emojis com moderação.
+
+FORMATAÇÃO DAS RESPOSTAS:
+- Use **negrito** para termos importantes
+- Use listas numeradas para passos (1. 2. 3.)
+- Use bullets (- item) para listas simples
+- Máximo 4 parágrafos curtos
+- Termine respostas completas com uma linha separada: "Posso ajudar com mais alguma coisa? 😊"
+
+BUSCA INTELIGENTE POR PALAVRAS-CHAVE (muito importante):
+As pessoas não usam sempre o termo técnico exato. Antes de decidir que não sabe a resposta, tente cruzar a pergunta com termos relacionados da base — pense como um atendente experiente faria. Exemplos de associação: "atendente"/"humano"/"pessoa real"/"falar com alguém" → conteúdo sobre suporte, ticket, WhatsApp ou equipe; "erro"/"travou"/"lento"/"não funciona" → conteúdo de TI; "dinheiro"/"pagamento" → comissão, boleto, extrato; "senha"/"acesso" → login; "prova"/"curso" → ABAC; "aviso"/"comunicado" → mural.
+${expandedTerms.length ? `Para esta pergunta específica, os seguintes temas da base podem estar relacionados, mesmo que a palavra exata não apareça: ${expandedTerms.join(', ')}. Verifique a base com atenção a esses temas antes de escalar.` : ''}
+
+REGRAS:
+1. Responda APENAS com base na BASE DE CONHECIMENTO.
+2. Sempre tente pelo menos 2-3 associações de palavras-chave antes de desistir de uma pergunta.
+3. Se a pergunta for vaga, faça UMA pergunta de clarificação curta.
+4. Se não houver resposta na base após tentar palavras relacionadas, responda SOMENTE: [ESCALAR]
+5. Nunca invente informações.
+6. Mantenha o contexto de toda a conversa.
+
+BASE DE CONHECIMENTO:
+${kb}`;
+
+  const res = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS no Apps Script
+    body: JSON.stringify({
+      action: 'chat',
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [...history, { role: 'user', content: userMsg }]
+    })
+  });
+  if(!res.ok) throw new Error(res.status);
+  const d = await res.json();
+  if(d.error) throw new Error(d.error);
+  return d.content[0].text.trim();
+}
+
+// ══════════════════════════════════════════════
+//  SEND MESSAGE
+// ══════════════════════════════════════════════
+async function sendMsg(text){
+  if(isTyping || !text.trim()) return;
+  isTyping = true;
+  sendBtn.disabled = true;
+  msgInput.value = '';
+  msgInput.style.height = 'auto';
+
+  // Capture user's name on first reply
+  if(awaitingName){
+    awaitingName = false;
+    addMsg('user', text.replace(/</g,'&lt;'));
+    let name = text.trim().split(/\s+/)[0];
+    name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    userName = name;
+    sugWrap.style.display = 'flex';
+    await typedMsg(`Prazer, <strong>${userName}</strong>! 😊 Pode me contar sua dúvida, ou escolher um tema abaixo:`);
+    isTyping = false;
+    sendBtn.disabled = !msgInput.value.trim();
+    return;
+  }
+
+  sugWrap.style.display = 'none';
+  escalated = false;
+  msgCount++;
+  sessionMsgs++;
+
+  // Track topic keywords
+  const topicWords = text.toLowerCase().match(/\b(ticket|proposta|abac|boleto|extrato|cota|login|senha|comissão|relatório|cliente|whatsapp|ti|manutenção|compra|colaborador|mural|tratativa)\b/g);
+  if(topicWords) topicWords.forEach(w => {
+    analytics.topics[w] = (analytics.topics[w]||0) + 1;
+  });
+
+  addMsg('user', text.replace(/</g,'&lt;'));
+  history.push({role:'user', content:text});
+
+  // Typing indicator
+  const {row:tRow} = addMsg('bot','',{typing:true,noTime:true});
+
+  let reply;
+  try { reply = await callClaude(text); }
+  catch(e){ reply = '[ESCALAR]'; }
+
+  tRow.remove();
+  history.push({role:'assistant', content:reply});
+  if(history.length > 24) history = history.slice(-24);
+
+  if(reply.includes('[ESCALAR]')){
+    clarifyTry++;
+    if(clarifyTry === 1){
+      await typedMsg(`Hmm, não encontrei diretamente${userName ? ', ' + userName : ''}. 🤔<br>Pode me dar mais detalhes? Por exemplo: em qual parte do portal isso acontece?`);
+    } else {
+      addMsg('bot', `Não encontrei essa resposta na minha base${userName ? ', ' + userName : ''}, mas nossa equipe pode te ajudar agora! 👇`);
+      showEscalation();
+      clarifyTry = 0;
+    }
+  } else {
+    clarifyTry = 0;
+    addMsg('bot', formatReply(reply));
+    addFeedback();
+    saveAnalytics();
+  }
+
+  isTyping = false;
+  sendBtn.disabled = !msgInput.value.trim();
+}
+
+// ══════════════════════════════════════════════
+//  ACTIONS
+// ══════════════════════════════════════════════
+function newChat(){
+  history = []; clarifyTry = 0; escalated = false; msgCount = 0; awaitingName = false; npsScore = null; userName = '';
+  msgBox.innerHTML = '';
+  sugWrap.style.display = 'flex';
+  msgInput.value = ''; msgInput.style.height='auto';
+  sendBtn.disabled = true;
+  endSession();
+  startSession();
+  showWelcome();
+}
+
+window.doWhatsApp = () => {
+  const a = WHATSAPP_TEAM[waIndex % WHATSAPP_TEAM.length];
+  waIndex++;
+  localStorage.setItem('pv_wa_idx', waIndex);
+  window.open(`https://wa.me/${a.num}?text=${encodeURIComponent(WHATSAPP_MSG)}`, '_blank');
+};
+window.doTicket = () => {
+  window.open(TICKET_URL, '_blank');
+};
+window.newChat = newChat;
+
+function showWelcome(){
+  addMsg('bot', `Olá! 👋 Sou o <strong>${AGENT_NAME}</strong>, assistente virtual do Portal Porto Vale.<br><br>Antes de começar, como você gostaria de ser chamado(a)?`);
+  awaitingName = true;
+  sugWrap.style.display = 'none';
+}
+
+// ══════════════════════════════════════════════
+//  SESSION TRACKING
+// ══════════════════════════════════════════════
+function startSession(){
+  sessionStart = new Date();
+  sessionResolved = 0; sessionEscalated = 0; sessionMsgs = 0;
+  analytics.totalSessions++;
+  saveAnalytics();
+}
+function endSession(){
+  if(!sessionStart) return;
+  analytics.sessions.push({
+    date: sessionStart.toISOString(),
+    resolved: sessionResolved,
+    escalated: sessionEscalated,
+    msgs: sessionMsgs
+  });
+  if(analytics.sessions.length > 200) analytics.sessions = analytics.sessions.slice(-200);
+  saveAnalytics();
+  sessionStart = null;
+}
+
+// ══════════════════════════════════════════════
+//  ANALYTICS RENDER
+// ══════════════════════════════════════════════
+function renderAnalytics(){
+  const wrap = $('analytics-wrap');
+  const a = analytics;
+  const total = a.resolved + a.escalated;
+  const resPct = total > 0 ? Math.round(a.resolved / total * 100) : 0;
+  const circ = 2 * Math.PI * 28; // r=28
+
+  // Top topics
+  const topTopics = Object.entries(a.topics)
+    .sort((x,y)=>y[1]-x[1]).slice(0,5);
+  const maxT = topTopics[0]?.[1] || 1;
+
+  // Estimated time saved (avg 4min per resolved)
+  const minSaved = a.resolved * 4;
+  const timeSaved = minSaved >= 60
+    ? `${Math.floor(minSaved/60)}h ${minSaved%60}min`
+    : `${minSaved}min`;
+
+  // Last 7 sessions
+  const recent = [...(a.sessions||[])].reverse().slice(0,7);
+
+  if(total === 0 && a.totalSessions === 0){
+    wrap.innerHTML = `<div class="an-empty"><i class="ti ti-chart-bar"></i>Nenhum dado ainda.<br>Comece uma conversa para ver o impacto aqui!</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <!-- KPI cards -->
+    <div class="an-grid">
+      <div class="an-card">
+        <div class="an-val">${a.totalSessions}</div>
+        <div class="an-label">Atendimentos</div>
+        <div class="an-sub blue">total de sessões</div>
+      </div>
+      <div class="an-card">
+        <div class="an-val">${a.resolved}</div>
+        <div class="an-label">Resolvidos pela IA</div>
+        <div class="an-sub green">sem escalonamento</div>
+      </div>
+      <div class="an-card">
+        <div class="an-val">${a.escalated}</div>
+        <div class="an-label">Escalados</div>
+        <div class="an-sub amber">para equipe humana</div>
+      </div>
+      <div class="an-card">
+        <div class="an-val">${a.clarifications}</div>
+        <div class="an-label">Clarificações</div>
+        <div class="an-sub blue">perguntas de apoio</div>
+      </div>
+    </div>
+
+    <!-- ROI highlight -->
+    <div class="roi-highlight" style="margin-bottom:12px">
+      <div class="roi-icon"><i class="ti ti-clock"></i></div>
+      <div class="roi-text">
+        <div class="roi-val">~${timeSaved} economizados</div>
+        <div class="roi-sub">estimativa: 4min por dúvida resolvida pela IA</div>
+      </div>
+    </div>
+
+    <!-- Resolution donut -->
+    <div class="an-card full" style="margin-bottom:9px">
+      <div class="an-title"><i class="ti ti-chart-donut"></i>Taxa de resolução da IA</div>
+      <div class="donut-wrap">
+        <div class="donut">
+          <svg viewBox="0 0 72 72" width="72" height="72">
+            <circle class="donut-track" cx="36" cy="36" r="28"/>
+            <circle class="donut-fill" cx="36" cy="36" r="28"
+              stroke="#1d4ed8"
+              stroke-dasharray="${(resPct/100*circ).toFixed(1)} ${circ.toFixed(1)}"
+              stroke-dashoffset="0"/>
+          </svg>
+          <div class="donut-center">
+            <div class="donut-pct">${resPct}%</div>
+            <div class="donut-pct-label">resolvido</div>
+          </div>
+        </div>
+        <div>
+          <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div>Resolvidos pela IA: <strong>${a.resolved}</strong></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#e5e7eb"></div>Escalados: <strong>${a.escalated}</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top topics -->
+    ${topTopics.length > 0 ? `
+    <div class="an-card full" style="margin-bottom:9px">
+      <div class="an-title"><i class="ti ti-tag"></i>Temas mais perguntados</div>
+      ${topTopics.map(([t,c])=>`
+        <div class="bar-row">
+          <div class="bar-label">${t}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(c/maxT*100)}%"></div></div>
+          <div class="bar-count">${c}</div>
+        </div>`).join('')}
+    </div>` : ''}
+
+    <!-- Recent sessions -->
+    ${recent.length > 0 ? `
+    <div class="an-card full">
+      <div class="an-title"><i class="ti ti-history"></i>Sessões recentes</div>
+      ${recent.map(s=>{
+        const d = new Date(s.date);
+        const label = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}) + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+        return `<div class="bar-row" style="margin-bottom:5px">
+          <div class="bar-label" style="width:120px">${label}</div>
+          <div style="font-size:11px;color:#6b7280;flex:1">${s.msgs} msg · ${s.resolved} ✓ · ${s.escalated} ↑</div>
+        </div>`;
+      }).join('')}
+    </div>` : ''}
+  `;
+}
+
+// ══════════════════════════════════════════════
+//  EVENTS
+// ══════════════════════════════════════════════
+$('fab').onclick = () => {
+  panelOpen = !panelOpen;
+  const panel = $('chat-panel');
+  const icon  = $('fab-icon');
+  const pulse = $('fab-pulse');
+  panel.classList.toggle('open', panelOpen);
+  setTimeout(()=>panel.classList.toggle('visible', panelOpen), 10);
+  icon.className = panelOpen ? 'ti ti-x' : 'ti ti-question-mark';
+  pulse.style.display = panelOpen ? 'none' : '';
+  $('fab-badge').classList.remove('show');
+  if(panelOpen && msgCount === 0){
+    startSession();
+    showWelcome();
+  }
+};
+
+function closeChatPanel(){
+  panelOpen = false;
+  $('chat-panel').classList.remove('visible');
+  setTimeout(()=>$('chat-panel').classList.remove('open'), 220);
+  $('fab-icon').className = 'ti ti-question-mark';
+  $('fab-pulse').style.display = '';
+}
+
+$('btn-close').onclick = () => {
+  // Só pergunta NPS se houve conversa de fato (pelo menos 1 mensagem) e ainda não respondeu nessa sessão
+  if(msgCount > 0 && npsScore === null){
+    openNpsModal();
+  } else {
+    closeChatPanel();
+  }
+};
+
+$('btn-new').onclick = newChat;
+
+// ══════════════════════════════════════════════
+//  DRAG (mover o widget livremente)
+// ══════════════════════════════════════════════
+(function enableDrag(){
+  const panel = $('chat-panel');
+  const handle = document.querySelector('.panel-header');
+  const root = document.querySelector('.widget-root');
+  let dragging = false, startX, startY, startRight, startBottom;
+
+  function onPointerDown(e){
+    // Não inicia drag se clicou em um botão do header
+    if(e.target.closest('.ph-btn')) return;
+    dragging = true;
+    panel.classList.add('dragging');
+    const rect = panel.getBoundingClientRect();
+    startX = e.clientX; startY = e.clientY;
+    startRight = window.innerWidth - rect.right;
+    startBottom = window.innerHeight - rect.bottom;
+    // Passa de posicionamento relativo (dentro do flow) para fixed livre
+    panel.style.position = 'fixed';
+    panel.style.right = startRight + 'px';
+    panel.style.bottom = startBottom + 'px';
+    panel.style.left = 'auto';
+    panel.style.top = 'auto';
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', onPointerUp);
+  }
+  function onPointerMove(e){
+    if(!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    let newRight = startRight - dx;
+    let newBottom = startBottom - dy;
+    // Limites para não sair da tela
+    newRight = Math.max(-panel.offsetWidth + 60, Math.min(window.innerWidth - 60, newRight));
+    newBottom = Math.max(-panel.offsetHeight + 60, Math.min(window.innerHeight - 60, newBottom));
+    panel.style.right = newRight + 'px';
+    panel.style.bottom = newBottom + 'px';
+  }
+  function onPointerUp(){
+    dragging = false;
+    panel.classList.remove('dragging');
+    document.removeEventListener('pointermove', onPointerMove);
+    document.removeEventListener('pointerup', onPointerUp);
+  }
+  handle.addEventListener('pointerdown', onPointerDown);
+})();
+
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.onclick = function(){
+    if(this.dataset.tab === 'analytics' && !isAdmin) return;
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
+    this.classList.add('active');
+    const t = this.dataset.tab;
+    $('tab-'+t).classList.add('active');
+    if(t === 'analytics') renderAnalytics();
+  };
+});
+
+// Input
+msgInput.addEventListener('input', function(){
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+  sendBtn.disabled = !this.value.trim() || isTyping;
+});
+msgInput.addEventListener('keydown', e => {
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(msgInput.value); }
+});
+sendBtn.onclick = () => sendMsg(msgInput.value);
+
+// Chips
+document.querySelectorAll('.sug-chip').forEach(c => {
+  c.onclick = () => sendMsg(c.dataset.q);
+});
+
+// ══════════════════════════════════════════════
+//  ADMIN ACCESS CONTROL
+// ══════════════════════════════════════════════
+function applyAdminUI(){
+  const display = isAdmin ? '' : 'none';
+  document.querySelectorAll('.admin-only').forEach(el => el.style.display = display);
+  $('admin-trigger').style.display = isAdmin ? 'none' : 'flex';
+  $('admin-badge').style.display = isAdmin ? 'flex' : 'none';
+
+  // Se perdeu acesso admin e estava na aba analytics, volta pro chat
+  if(!isAdmin && $('tab-analytics').classList.contains('active')){
+    document.querySelector('.tab-btn[data-tab="chat"]').click();
+  }
+}
+
+$('admin-trigger').onclick = () => {
+  $('login-user').value = '';
+  $('login-pass').value = '';
+  $('login-error').style.display = 'none';
+  $('login-overlay').classList.add('open');
+  setTimeout(()=>$('login-user').focus(), 100);
+};
+
+$('login-cancel').onclick = () => $('login-overlay').classList.remove('open');
+$('login-overlay').onclick = e => { if(e.target===$('login-overlay')) $('login-overlay').classList.remove('open'); };
+
+function attemptLogin(){
+  const u = $('login-user').value.trim();
+  const p = $('login-pass').value;
+  $('login-error').style.display = 'none';
+  $('login-submit').disabled = true;
+
+  auth.signInWithEmailAndPassword(u, p)
+    .then(() => {
+      $('login-overlay').classList.remove('open');
+    })
+    .catch(() => {
+      $('login-error').style.display = 'flex';
+    })
+    .finally(() => {
+      $('login-submit').disabled = false;
+    });
+}
+$('login-submit').onclick = attemptLogin;
+$('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') attemptLogin(); });
+$('login-user').addEventListener('keydown', e => { if(e.key==='Enter') $('login-pass').focus(); });
+
+$('admin-logout').onclick = () => {
+  auth.signOut();
+};
+
+// Mantém isAdmin sincronizado com o estado real de login do Firebase
+// (persiste automaticamente entre recarregamentos da página)
+auth.onAuthStateChanged(user => {
+  isAdmin = !!user;
+  applyAdminUI();
+});
+
+applyAdminUI();
+
+// KB Editor
+$('kb-trigger').onclick = () => {
+  if(!isAdmin) return;
+  $('kb-textarea').value = kb;
+  $('kb-overlay').classList.add('open');
+};
+$('kb-close').onclick = $('kb-cancel').onclick = () => $('kb-overlay').classList.remove('open');
+$('kb-overlay').onclick = e => { if(e.target===$('kb-overlay')) $('kb-overlay').classList.remove('open'); };
+$('kb-save').onclick = () => {
+  kb = $('kb-textarea').value.trim();
+  localStorage.setItem('pv_kb', kb);
+  $('kb-overlay').classList.remove('open');
+  $('fab-badge').classList.add('show');
+  const b = $('kb-save');
+  const orig = b.innerHTML;
+  b.innerHTML = '<i class="ti ti-check"></i>Salvo!';
+  b.style.background = '#16a34a';
+  setTimeout(()=>{ b.innerHTML=orig; b.style.background=''; }, 1800);
+};
+
+// Persist session on page leave
+window.addEventListener('beforeunload', endSession);
+
+// Show badge on first load (invite user)
+setTimeout(()=>$('fab-badge').classList.add('show'), 1500);
+
+// ══════════════════════════════════════════════
+//  NPS — Avaliação de satisfação
+// ══════════════════════════════════════════════
+function buildNpsScale(){
+  const wrap = $('nps-scale');
+  wrap.innerHTML = '';
+  for(let i = 0; i <= 10; i++){
+    const btn = document.createElement('button');
+    btn.className = 'nps-num';
+    if(i <= 6) btn.classList.add('low');
+    else if(i <= 8) btn.classList.add('mid');
+    else btn.classList.add('high');
+    btn.textContent = i;
+    btn.dataset.val = i;
+    btn.onclick = () => {
+      wrap.querySelectorAll('.nps-num').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      npsScore = i;
+      $('nps-submit').disabled = false;
+    };
+    wrap.appendChild(btn);
+  }
+}
+buildNpsScale();
+
+function openNpsModal(){
+  npsScore = null;
+  $('nps-submit').disabled = true;
+  document.querySelector('.nps-thanks-view')?.remove();
+  $('nps-scale').style.display = 'grid';
+  document.querySelector('.nps-labels').style.display = 'flex';
+  $('nps-title').style.display = '';
+  document.querySelector('#nps-overlay .login-sub').style.display = '';
+  $('nps-submit').style.display = 'flex';
+  $('nps-skip').style.display = 'flex';
+  buildNpsScale();
+  $('nps-overlay').classList.add('open');
+}
+
+$('nps-submit').onclick = () => {
+  if(npsScore === null) return;
+  try {
+    analytics.npsScores.push({ date: new Date().toISOString(), score: npsScore });
+    if(analytics.npsScores.length > 500) analytics.npsScores = analytics.npsScores.slice(-500);
+    saveAnalytics();
+  } catch(err) {
+    console.error('Erro ao salvar avaliação NPS:', err);
+  }
+  showNpsThanks();
+};
+$('nps-skip').onclick = () => {
+  $('nps-overlay').classList.remove('open');
+  closeChatPanel();
+};
+
+function showNpsThanks(){
+  $('nps-title').style.display = 'none';
+  document.querySelector('#nps-overlay .login-sub').style.display = 'none';
+  $('nps-scale').style.display = 'none';
+  document.querySelector('.nps-labels').style.display = 'none';
+  $('nps-submit').style.display = 'none';
+  $('nps-skip').style.display = 'none';
+
+  const thanks = document.createElement('div');
+  thanks.className = 'nps-thanks-view nps-thanks';
+  thanks.innerHTML = `<i class="ti ti-circle-check"></i><p>Obrigado pela sua avaliação!</p>`;
+  document.querySelector('#nps-overlay .login-box').appendChild(thanks);
+
+  setTimeout(()=>{
+    $('nps-overlay').classList.remove('open');
+    closeChatPanel();
+  }, 1300);
+}
+
+// ══════════════════════════════════════════════
+//  DOWNLOAD CONVERSA (PDF) — visual com marca
+// ══════════════════════════════════════════════
+$('btn-download').onclick = () => {
+  if(msgCount === 0){
+    alert('Inicie uma conversa antes de baixar.');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const pageWidth  = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const marginX = 42;
+  const contentWidth = pageWidth - marginX * 2;
+  const bubbleMaxWidth = contentWidth * 0.74;
+  const footerY = pageHeight - 28;
+  let y = 0;
+  let pageNum = 1;
+
+  const BRAND = { r: 29, g: 78, b: 216 };       // #1d4ed8
+  const BRAND_LIGHT = { r: 59, g: 130, b: 246 }; // #3b82f6
+  const BOT_BG  = { r: 243, g: 244, b: 246 };    // #f3f4f6
+  const TEXT_DARK = { r: 17, g: 24, b: 39 };
+  const TEXT_MUTE = { r: 148, g: 163, b: 184 };
+
+  function drawHeader(){
+    // Faixa de marca no topo
+    doc.setFillColor(BRAND.r, BRAND.g, BRAND.b);
+    doc.rect(0, 0, pageWidth, 64, 'F');
+
+    // "Avatar" circular com ? — identidade do Lead
+    doc.setFillColor(255, 255, 255);
+    doc.circle(marginX + 14, 32, 14, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(BRAND.r, BRAND.g, BRAND.b);
+    doc.text('?', marginX + 14, 36.5, { align: 'center' });
+
+    // Título e subtítulo
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(255, 255, 255);
+    doc.text('Lead · Assistente IA', marginX + 36, 29);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(219, 234, 254);
+    doc.text('Portal Porto Vale Consórcio — Registro de conversa', marginX + 36, 42);
+
+    // Data alinhada à direita
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(219, 234, 254);
+    doc.text(new Date().toLocaleString('pt-BR'), pageWidth - marginX, 29, { align: 'right' });
+    if(userName){
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.text(`Atendimento: ${userName}`, pageWidth - marginX, 42, { align: 'right' });
+    }
+
+    y = 64 + 26;
+  }
+
+  function drawFooter(){
+    doc.setDrawColor(229, 231, 235);
+    doc.line(marginX, footerY - 10, pageWidth - marginX, footerY - 10);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(TEXT_MUTE.r, TEXT_MUTE.g, TEXT_MUTE.b);
+    doc.text('Gerado automaticamente pelo Assistente Lead IA · Porto Vale Consórcio', marginX, footerY);
+    doc.text(`Página ${pageNum}`, pageWidth - marginX, footerY, { align: 'right' });
+  }
+
+  function newPage(){
+    drawFooter();
+    doc.addPage();
+    pageNum++;
+    drawHeader();
+  }
+
+  function checkPageBreak(blockHeight){
+    if(y + blockHeight > footerY - 16){
+      newPage();
+    }
+  }
+
+  drawHeader();
+
+  document.querySelectorAll('#messages .msg-row').forEach(row => {
+    const isUser = row.classList.contains('user');
+    const bubbleEl = row.querySelector('.bubble');
+    if(!bubbleEl) return; // pula cards de escalonamento
+    const rawText = bubbleEl.innerText.trim();
+    if(!rawText) return;
+
+    const timeEl = row.querySelector('.msg-time');
+    const timeLabel = timeEl ? timeEl.textContent.trim() : '';
+    const label = isUser ? (userName || 'Você') : 'Lead · IA';
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    const lines = doc.splitTextToSize(rawText, bubbleMaxWidth - 24);
+    const lineHeight = 13.5;
+    const textBlockH = lines.length * lineHeight;
+    const bubbleH = textBlockH + 30; // padding + label
+
+    checkPageBreak(bubbleH + 8);
+
+    // Largura real da bolha = maior linha (com limites)
+    let textW = 0;
+    lines.forEach(l => { textW = Math.max(textW, doc.getTextWidth(l)); });
+    const bubbleW = Math.min(bubbleMaxWidth, Math.max(textW + 24, 90));
+    const bubbleX = isUser ? (pageWidth - marginX - bubbleW) : marginX;
+
+    // Desenha a bolha
+    if(isUser){
+      doc.setFillColor(BRAND.r, BRAND.g, BRAND.b);
+    } else {
+      doc.setFillColor(BOT_BG.r, BOT_BG.g, BOT_BG.b);
+    }
+    doc.roundedRect(bubbleX, y, bubbleW, bubbleH, 8, 8, 'F');
+
+    // Label (remetente + horário)
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    if(isUser){
+      doc.setTextColor(219, 234, 254);
+    } else {
+      doc.setTextColor(BRAND.r, BRAND.g, BRAND.b);
+    }
+    const labelText = timeLabel ? `${label}  ·  ${timeLabel}` : label;
+    doc.text(labelText, bubbleX + 12, y + 14);
+
+    // Texto da mensagem
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(isUser ? 255 : TEXT_DARK.r, isUser ? 255 : TEXT_DARK.g, isUser ? 255 : TEXT_DARK.b);
+    doc.text(lines, bubbleX + 12, y + 27);
+
+    y += bubbleH + 10;
+  });
+
+  drawFooter();
+
+  const fileName = `conversa-lead-${new Date().toISOString().slice(0,10)}.pdf`;
+  doc.save(fileName);
+};
+
+// ══════════════════════════════════════════════
+//  EXPORTAR PAINEL DE IMPACTO (PDF) — admin only
+// ══════════════════════════════════════════════
+$('btn-export-analytics').onclick = () => {
+  if(!isAdmin) return;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const marginX = 40;
+  let y = 50;
+  const a = analytics;
+  const total = a.resolved + a.escalated;
+  const resPct = total > 0 ? Math.round(a.resolved / total * 100) : 0;
+  const minSaved = a.resolved * 4;
+  const timeSaved = minSaved >= 60 ? `${Math.floor(minSaved/60)}h ${minSaved%60}min` : `${minSaved}min`;
+  const npsList = a.npsScores || [];
+  const npsAvg = npsList.length ? (npsList.reduce((s,x)=>s+x.score,0) / npsList.length).toFixed(1) : '—';
+  const promoters = npsList.filter(x=>x.score>=9).length;
+  const detractors = npsList.filter(x=>x.score<=6).length;
+  const npsRate = npsList.length ? Math.round(((promoters-detractors)/npsList.length)*100) : '—';
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(29,78,216);
+  doc.text('Painel de Impacto — Assistente Lead IA', marginX, y); y += 20;
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(120,120,120);
+  doc.text(`Portal Porto Vale Consórcio · Exportado em ${new Date().toLocaleString('pt-BR')}`, marginX, y); y += 16;
+  doc.setDrawColor(229,231,235); doc.line(marginX, y, doc.internal.pageSize.getWidth()-marginX, y); y += 26;
+
+  function kpi(label, value){
+    doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(17,24,39);
+    doc.text(String(value), marginX, y);
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(107,114,128);
+    doc.text(label, marginX + 90, y);
+    y += 20;
+  }
+  kpi('Total de atendimentos', a.totalSessions);
+  kpi('Resolvidos pela IA', a.resolved);
+  kpi('Escalados para a equipe', a.escalated);
+  kpi('Taxa de resolução da IA', resPct + '%');
+  kpi('Tempo estimado economizado', timeSaved);
+  kpi('NPS médio (0-10)', npsAvg + (npsList.length ? ` (${npsList.length} avaliações)` : ''));
+  kpi('Score NPS (promotores - detratores)', npsRate === '—' ? '—' : npsRate + '%');
+
+  y += 8;
+  doc.setDrawColor(229,231,235); doc.line(marginX, y, doc.internal.pageSize.getWidth()-marginX, y); y += 22;
+
+  // Top topics
+  const topTopics = Object.entries(a.topics).sort((x,y)=>y[1]-x[1]).slice(0,8);
+  if(topTopics.length){
+    doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(17,24,39);
+    doc.text('Temas mais perguntados', marginX, y); y += 16;
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(55,65,81);
+    topTopics.forEach(([t,c]) => {
+      doc.text(`• ${t} — ${c} ocorrência(s)`, marginX, y);
+      y += 14;
+    });
+  }
+
+  doc.save(`painel-impacto-lead-${new Date().toISOString().slice(0,10)}.pdf`);
+};
+</script>
+</body>
+</html>
