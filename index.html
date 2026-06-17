@@ -8,6 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 /* ─── RESET ─────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
@@ -564,6 +565,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db = firebase.firestore();
 
 const DEFAULT_KB = `
 P: Como verifico as pendências do dia?
@@ -619,12 +621,60 @@ R: O fechamento de tratativas é feito periodicamente. Sinalize nos grupos de pe
 
 P: Como falo com um atendente de verdade / pessoa da equipe?
 R: Se preferir falar diretamente com a equipe, você pode usar os botões de WhatsApp ou Abrir Ticket que aparecem no chat — assim que eu não conseguir resolver, ou se você quiser pular direto para um humano, é só pedir!
+
+P: O que é o rateio?
+R: O rateio é uma negociação utilizada para diluir parcelas em atraso nas próximas parcelas da cota, facilitando a regularização do pagamento. Existem regras da Porto para essa modalidade — é necessário consultar para verificar se a cota está apta.
+
+P: O cliente consegue participar da assembleia com parcela em atraso?
+R: Não. Para participar da assembleia, a parcela precisa estar paga dentro do vencimento, que ocorre todo dia 15.
+
+P: Dá para pagar parcela em atraso no cartão de crédito?
+R: Sim, via plataforma Quita+.
+
+P: O que acontece quando a cota fica com 3 parcelas em atraso?
+R: A cota corre risco de cancelamento automático, por isso é importante buscar negociação antes desse prazo.
+
+P: O cliente consegue fazer mais de um rateio seguido?
+R: Após efetivar um rateio, é necessário pagar pelo menos 5 parcelas para poder solicitar um novo.
+
+P: O que é o OPT-IN?
+R: É um termo de autorização que o cliente precisa aceitar para prosseguirmos com algumas solicitações, como emissão de boletos de negociação.
+
+P: Após pagar a negociação, o cliente volta automaticamente para a assembleia?
+R: Depende da situação. No rateio, o cliente volta a participar da assembleia no mês em que os pagamentos retornam — por exemplo, se o rateio retorna em junho e o cliente paga até o dia 15, já volta normalmente. No pagamento de boleto em atraso, o cliente retorna à assembleia apenas no mês seguinte, desde que pague dentro do vencimento; pagando em atraso, não retorna naquele mês.
+
+P: O pagamento realizado no dia da assembleia permite participação?
+R: Não. O pagamento precisa ser realizado dentro do vencimento da parcela para garantir a participação.
+
+P: O cliente pode cancelar a cota diretamente com a cobrança?
+R: Não. Os processos de cancelamento são orientados pelo gerente ou consultor responsável.
+
+P: Por que o cliente precisa enviar comprovante?
+R: Para acompanharmos a baixa do pagamento e garantir que a negociação ou rateio seja efetivado corretamente.
+
+P: O que acontece se o cliente desistir do rateio?
+R: O acordo é cancelado e a cota permanece com as parcelas em aberto, podendo continuar em inadimplência.
+
+P: Qual o prazo para a baixa do pagamento após quitar o boleto?
+R: Após o pagamento do boleto, a baixa bancária leva de 2 a 3 dias úteis para ser processada. Por isso, o envio do comprovante é fundamental para que possamos acompanhar e tratar qualquer imprevisto.
 `.trim();
 
 // ══════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════
-let kb          = localStorage.getItem('pv_kb') || DEFAULT_KB;
+let kb          = DEFAULT_KB; // valor inicial; atualizado pelo Firestore em loadKB() abaixo
+
+async function loadKB(){
+  try {
+    const doc = await db.collection('config').doc('kb').get();
+    if(doc.exists && doc.data().content){
+      kb = doc.data().content;
+    }
+  } catch(err){
+    console.warn('Não foi possível carregar a base de conhecimento do Firestore, usando a padrão.', err);
+  }
+}
+loadKB();
 let waIndex     = parseInt(localStorage.getItem('pv_wa_idx') || '0');
 let panelOpen   = false;
 let isTyping    = false;
@@ -1323,16 +1373,27 @@ $('kb-trigger').onclick = () => {
 };
 $('kb-close').onclick = $('kb-cancel').onclick = () => $('kb-overlay').classList.remove('open');
 $('kb-overlay').onclick = e => { if(e.target===$('kb-overlay')) $('kb-overlay').classList.remove('open'); };
-$('kb-save').onclick = () => {
+$('kb-save').onclick = async () => {
   kb = $('kb-textarea').value.trim();
-  localStorage.setItem('pv_kb', kb);
-  $('kb-overlay').classList.remove('open');
-  $('fab-badge').classList.add('show');
   const b = $('kb-save');
   const orig = b.innerHTML;
-  b.innerHTML = '<i class="ti ti-check"></i>Salvo!';
-  b.style.background = '#16a34a';
-  setTimeout(()=>{ b.innerHTML=orig; b.style.background=''; }, 1800);
+  b.disabled = true;
+  try {
+    await db.collection('config').doc('kb').set({
+      content: kb,
+      updatedAt: new Date().toISOString(),
+      updatedBy: auth.currentUser ? auth.currentUser.email : null
+    });
+    $('kb-overlay').classList.remove('open');
+    $('fab-badge').classList.add('show');
+    b.innerHTML = '<i class="ti ti-check"></i>Salvo!';
+    b.style.background = '#16a34a';
+  } catch(err){
+    b.innerHTML = '<i class="ti ti-alert-triangle"></i>Erro ao salvar';
+    b.style.background = '#dc2626';
+    console.error(err);
+  }
+  setTimeout(()=>{ b.innerHTML=orig; b.style.background=''; b.disabled = false; }, 1800);
 };
 
 // Persist session on page leave
