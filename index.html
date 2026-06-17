@@ -567,23 +567,26 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 const DEFAULT_KB = `
-P: Como verifico as pendências do dia?
-R: Verifique os prazos de tratativa e solicite retorno aos gerentes dentro do limite. Filtre o campo de "não identificadas" diariamente para verificar se alguma proposta foi identificada. Caso não respondam no prazo, cobre via grupo de pendências.
-
 P: Como cancelo uma proposta?
 R: O cancelamento de propostas é feito a pedido do gerente. Após o cancelamento, retire a proposta do sistema e, se necessário, transmita uma nova proposta em substituição — sempre atualize no sistema.
 
 P: Como funciona a solicitação de boletos e extratos?
-R: Solicitações de boletos, extratos e dúvidas de parcelas chegam via gestão de carteira. Faça a simulação de aumento de crédito, esclareça dúvidas sobre valores divergentes e envie o informe de rendimento pela central.
+R: Gere um ticket conforme a sua necessidade através do Portal. O retorno será via WhatsApp dentro da SLA informada no ticket.
 
 P: Como abro um ticket no portal?
 R: Acesse "Ferramentas" > "Novo ticket - GRE", preencha título, descrição e prioridade e clique em "Criar". Você receberá um número de protocolo por e-mail.
 
 P: Como acompanho um ticket aberto?
-R: Acesse "Acompanhar Solicitação" no portal. Você verá todos os tickets com filtros de status: Aberto, Em andamento e Resolvido.
+R: Acesse "Acompanhar Solicitação" no portal. Você verá todos os tickets com filtros de status: Aberto, em andamento e resolvido.
 
 P: Como funciona a inscrição na ABAC?
-R: Receba o pedido do gerente, repasse as regras antes de inscrever. Somente após aprovação gere a matrícula. Envie a documentação e agende a prova conforme disponibilidade. Avise o DP para cobrança e insira na planilha de controle.
+R: Você pode gerar um ticket como "Inscrições ABAC". O seu pedido será enviado para a May do GRE e ela dará retorno via WhatsApp com o cadastro realizado e andamento do processo.
+
+P: A ABAC tem custo?
+R: Sim. A ABAC tem um custo de R$ 90, descontado diretamente em folha mediante autorização junto ao DP. Esse valor contempla 2 tentativas.
+
+P: A ABAC é obrigatória?
+R: Não. A participação é opcional e todo o processo é realizado pelo GRE.
 
 P: O que faço quando um vendedor tem intercorrência na ABAC (atestado, afastamento, desligamento)?
 R: Toda intercorrência durante o processo da ABAC deve ser tratada diretamente com você como responsável. Acione o gerente e o DP conforme necessário.
@@ -592,70 +595,78 @@ P: Como cadastro um novo colaborador no corretor online?
 R: O cadastro é feito no sistema Corretor Online. Na ausência do aprendiz, a analista realiza o cadastro. Também é necessário bloquear o acesso de colaboradores desligados.
 
 P: Como funciona o Mural de Avisos - GRE?
-R: O Mural é gerenciado com comunicados gerados pela Porto: atualizações, tutoriais, avisos, campanhas e tabelas de grupos. Acesse em "Ferramentas" > "Mural de Avisos - GRE".
+R: O mural é gerenciado com comunicados gerados pela Porto, como atualizações, tutoriais, avisos, campanhas e tabelas de grupos. Acesse Portal > "Mural de Avisos - GRE".
 
 P: Como funciona o atendimento pelo WhatsApp?
-R: Responda toda a demanda que chega no WhatsApp por ordem de chegada (do mais antigo ao mais recente) e direcione aos canais corretos.
+R: O atendimento pelo WhatsApp ocorre por ordem de chegada, do mais antigo para o mais recente.
 
 P: Como verifico o status de uma cota?
-R: Verifique o status da cota quando solicitado — se está alocada, cancelada ou com pagamento efetuado. Se necessário, acompanhe o fluxo de transferência de titularidade na esteira.
-
-P: Como faço pedido de compras de materiais de trabalho?
-R: Acesse "Ferramentas" > "Pedido de Compras" no portal. Gere o pedido para celulares, acessórios (suportes, fones, itens de ergonomia) e demais materiais necessários.
+R: O GRE verifica o status da cota quando solicitado — se está alocada, cancelada ou com pagamento efetuado — diretamente no Gerenciador de Propostas, onde os gerentes também possuem acesso.
 
 P: Como solicito suporte de TI?
-R: Acesse "Ferramentas" > "Chamado TI e Manutenção" para abrir um chamado. A TI cuida de geração de ramais, números de WhatsApp, usuários e senhas de acesso.
+R: Acesse "Ferramentas" > "Chamado TI e Manutenção" para abrir um chamado.
 
 P: O que a TI resolve?
-R: A TI atende chamados sobre: acesso e senha de sistemas, configuração de ramais e telefonia, problemas de internet/rede, instalação de programas, manutenção de computadores e periféricos, e cadastro de número de WhatsApp corporativo. Abra o chamado em "Ferramentas" > "Chamado TI e Manutenção" detalhando o problema.
+R: A TI atende chamados relacionados a acesso e senha de sistemas e e-mails, configuração de ramais e telefonia, problemas de internet e rede, instalação de programas, manutenção de computadores e periféricos e cadastro de números de WhatsApp corporativo.
 
 P: Meu computador ou sistema está com problema técnico, o que faço?
-R: Abra um chamado em "Ferramentas" > "Chamado TI e Manutenção", descrevendo o problema (ex: tela travando, sistema lento, erro ao abrir). A equipe de TI responde por ordem de prioridade.
+R: Abra um chamado em "Ferramentas" > "Chamado TI e Manutenção", descrevendo o problema. A equipe de TI responde conforme a prioridade do chamado.
 
 P: Como transmito uma proposta ou reenvio o link de assinatura?
-R: A transmissão de propostas e reenvio de link de assinatura/contrato são feitos diretamente no sistema. Sempre substitua a proposta no sistema após qualquer alteração.
+R: A transmissão de propostas e o reenvio do link de assinatura ou contrato são feitos diretamente no sistema. Sempre substitua a proposta após qualquer alteração. Em caso de dúvidas, o vendedor deve acionar o gerente, que poderá solicitar apoio ao GRE.
 
-P: Como faço o fechamento de tratativas do departamento?
-R: O fechamento de tratativas é feito periodicamente. Sinalize nos grupos de pendências as tratativas necessárias para as propostas identificadas das superintendências: LOTUS, Atena, Fênix, Anjos, Groove e Diamantes.
+P: Preciso transmitir proposta e deu recusa. Posso pedir reanálise?
+R: Sim. Desde que sejam enviados documentos complementares, como Imposto de Renda e/ou os 3 últimos holerites do cliente. Casos de SCORE não são enviados para reanálise.
 
-P: Como falo com um atendente de verdade / pessoa da equipe?
-R: Se preferir falar diretamente com a equipe, você pode usar os botões de WhatsApp ou Abrir Ticket que aparecem no chat — assim que eu não conseguir resolver, ou se você quiser pular direto para um humano, é só pedir!
+P: Como falo com um atendente de verdade/pessoa da equipe?
+R: Se preferir falar diretamente com a equipe, utilize os botões de WhatsApp ou Abrir Ticket disponíveis no chat.
+
+P: Quero falar com atendente!
+R: Você também pode falar diretamente com o GRE:
+- Luana: +55 12 3600-3504
+- Mayara: +55 12 3600-2689
 
 P: O que é o rateio?
-R: O rateio é uma negociação utilizada para diluir parcelas em atraso nas próximas parcelas da cota, facilitando a regularização do pagamento. Existem regras da Porto para essa modalidade — é necessário consultar para verificar se a cota está apta.
+R: O rateio é uma negociação utilizada para diluir parcelas em atraso nas próximas parcelas da cota, facilitando a regularização do pagamento. Existem regras da Porto para essa modalidade e é necessário verificar se a cota está apta.
 
 P: O cliente consegue participar da assembleia com parcela em atraso?
 R: Não. Para participar da assembleia, a parcela precisa estar paga dentro do vencimento, que ocorre todo dia 15.
 
 P: Dá para pagar parcela em atraso no cartão de crédito?
-R: Sim, via plataforma Quita+.
+R: Sim, através da plataforma Quita+.
 
 P: O que acontece quando a cota fica com 3 parcelas em atraso?
-R: A cota corre risco de cancelamento automático, por isso é importante buscar negociação antes desse prazo.
+R: A cota corre risco de cancelamento automático. Por isso, é importante buscar negociação antes desse prazo.
 
 P: O cliente consegue fazer mais de um rateio seguido?
-R: Após efetivar um rateio, é necessário pagar pelo menos 5 parcelas para poder solicitar um novo.
+R: Após efetivar um rateio, é necessário pagar pelo menos 5 parcelas antes de solicitar um novo.
 
-P: O que é o OPT-IN?
+P: O que é o OPT-IN (token)?
 R: É um termo de autorização que o cliente precisa aceitar para prosseguirmos com algumas solicitações, como emissão de boletos de negociação.
 
 P: Após pagar a negociação, o cliente volta automaticamente para a assembleia?
-R: Depende da situação. No rateio, o cliente volta a participar da assembleia no mês em que os pagamentos retornam — por exemplo, se o rateio retorna em junho e o cliente paga até o dia 15, já volta normalmente. No pagamento de boleto em atraso, o cliente retorna à assembleia apenas no mês seguinte, desde que pague dentro do vencimento; pagando em atraso, não retorna naquele mês.
+R: Depende da situação. No rateio, o cliente volta a participar da assembleia no mês em que os pagamentos retornam, desde que pague até o dia 15. No pagamento de boleto em atraso, retorna apenas no mês seguinte, desde que esteja em dia.
 
 P: O pagamento realizado no dia da assembleia permite participação?
-R: Não. O pagamento precisa ser realizado dentro do vencimento da parcela para garantir a participação.
+R: Não. O pagamento precisa ocorrer dentro do vencimento da parcela para garantir participação.
 
 P: O cliente pode cancelar a cota diretamente com a cobrança?
-R: Não. Os processos de cancelamento são orientados pelo gerente ou consultor responsável.
+R: Não. Os processos de cancelamento são orientados pelo gerente ou consultor responsável. O pedido deve ser feito pelo próprio cliente através da Central de Atendimento Porto, que enviará um link para acompanhamento e efetivação da solicitação.
+
+P: Como reativa a cota do cliente?
+R: A solicitação é feita pela Central e, em casos de exceção, pelo GRE. O pedido pode ser realizado se o cancelamento ocorreu há até 6 meses. O valor é calculado, o cliente precisa regularizar a pendência e assinar o termo de acordo. Após a conclusão do processo, a reativação ocorre em aproximadamente 2 dias úteis.
+
+P: É possível trocar a forma de pagamento do cliente?
+R: Depende. Para alteração para cartão, gere um ticket do tipo "LINK DE CARTÃO". As demais alterações devem ser feitas diretamente pela Central de Atendimento ou pelo aplicativo.
 
 P: Por que o cliente precisa enviar comprovante?
 R: Para acompanharmos a baixa do pagamento e garantir que a negociação ou rateio seja efetivado corretamente.
 
 P: O que acontece se o cliente desistir do rateio?
-R: O acordo é cancelado e a cota permanece com as parcelas em aberto, podendo continuar em inadimplência.
+R: O acordo é cancelado e a cota permanece com as parcelas em aberto, podendo continuar inadimplente.
 
 P: Qual o prazo para a baixa do pagamento após quitar o boleto?
-R: Após o pagamento do boleto, a baixa bancária leva de 2 a 3 dias úteis para ser processada. Por isso, o envio do comprovante é fundamental para que possamos acompanhar e tratar qualquer imprevisto.
+R: Após o pagamento, a baixa bancária leva de 2 a 3 dias úteis para ser processada. Por isso, o envio do comprovante é importante para acompanhamento.
 `.trim();
 
 // ══════════════════════════════════════════════
