@@ -904,8 +904,70 @@ function expandKeywords(text){
   return [...matched];
 }
 
+// ── Busca real de palavras-chave dentro da base de conhecimento ──
+function normalizeText(str){
+  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+const STOPWORDS = new Set(['a','o','as','os','de','da','do','das','dos','em','um','uma','para','por','com','que','se','no','na','nos','nas','ao','aos','como','quando','qual','quais','e','ou','mas','sobre','tem','tenho','vai','meu','minha','seu','sua','isso','esse','essa','este','esta','voce','você','eu','me']);
+
+function tokenize(str){
+  return normalizeText(str)
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(t => t.length > 2 && !STOPWORDS.has(t));
+}
+
+function parseKB(kbText){
+  const parts = kbText.split(/\nP:/);
+  const entries = [];
+  parts.forEach((part, i) => {
+    const block = (i === 0 ? part : 'P:' + part).trim();
+    if(!block.startsWith('P:')) return;
+    const qMatch = block.match(/^P:\s*([^\n]+)/);
+    const rMatch = block.match(/\nR:\s*([\s\S]*)/);
+    if(qMatch && rMatch){
+      entries.push({ question: qMatch[1].trim(), answer: rMatch[1].trim() });
+    }
+  });
+  return entries;
+}
+
+function searchKB(userMsg, kbText, topN = 4){
+  const entries = parseKB(kbText);
+  if(!entries.length) return [];
+
+  const extraTerms = expandKeywords(userMsg);
+  const queryTokens = new Set([...tokenize(userMsg), ...tokenize(extraTerms.join(' '))]);
+  if(!queryTokens.size) return [];
+
+  const scored = entries.map(entry => {
+    const entryTokens = tokenize(entry.question + ' ' + entry.answer);
+    const entryTokenSet = new Set(entryTokens);
+    let score = 0;
+    queryTokens.forEach(qt => {
+      if(entryTokenSet.has(qt)){
+        score += 2;
+      } else if(entryTokens.some(et => et.length > 3 && (et.includes(qt) || qt.includes(et)))){
+        score += 1;
+      }
+    });
+    return { entry, score };
+  });
+
+  return scored
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topN)
+    .map(s => s.entry);
+}
+
 async function callClaude(userMsg){
-  const expandedTerms = expandKeywords(userMsg);
+  const topMatches = searchKB(userMsg, kb, 4);
+  const relevantSection = topMatches.length
+    ? topMatches.map(m => `P: ${m.question}\nR: ${m.answer}`).join('\n\n')
+    : '(nenhum trecho com correspondência direta de palavras-chave — revise a base completa abaixo)';
+
   const systemPrompt = `Você é "${AGENT_NAME}", assistente virtual inteligente do Portal Porto Vale — portal interno para atendentes e corretores de consórcios.
 
 ${userName ? `O nome da pessoa com quem você está falando é "${userName}". Trate-a pelo nome de forma natural — não em toda mensagem, mas o suficiente para parecer pessoal (ex: ao saudar, ao confirmar algo importante, ou ao encerrar).` : ''}
@@ -921,19 +983,17 @@ FORMATAÇÃO DAS RESPOSTAS:
 - Máximo 4 parágrafos curtos
 - Termine respostas completas com uma linha separada: "Posso ajudar com mais alguma coisa? 😊"
 
-BUSCA INTELIGENTE POR PALAVRAS-CHAVE (muito importante):
-As pessoas não usam sempre o termo técnico exato. Antes de decidir que não sabe a resposta, tente cruzar a pergunta com termos relacionados da base — pense como um atendente experiente faria. Exemplos de associação: "atendente"/"humano"/"pessoa real"/"falar com alguém" → conteúdo sobre suporte, ticket, WhatsApp ou equipe; "erro"/"travou"/"lento"/"não funciona" → conteúdo de TI; "dinheiro"/"pagamento" → comissão, boleto, extrato; "senha"/"acesso" → login; "prova"/"curso" → ABAC; "aviso"/"comunicado" → mural.
-${expandedTerms.length ? `Para esta pergunta específica, os seguintes temas da base podem estar relacionados, mesmo que a palavra exata não apareça: ${expandedTerms.join(', ')}. Verifique a base com atenção a esses temas antes de escalar.` : ''}
+TRECHOS DA BASE ENCONTRADOS PARA ESTA PERGUNTA (busca automática por palavras-chave, já feita pelo sistema):
+${relevantSection}
 
 REGRAS:
-1. Responda APENAS com base na BASE DE CONHECIMENTO.
-2. Sempre tente pelo menos 2-3 associações de palavras-chave antes de desistir de uma pergunta.
-3. Se a pergunta for vaga, faça UMA pergunta de clarificação curta.
-4. Se não houver resposta na base após tentar palavras relacionadas, responda SOMENTE: [ESCALAR]
-5. Nunca invente informações.
-6. Mantenha o contexto de toda a conversa.
+1. Se houver trechos encontrados acima, responda com base neles — mesmo que a mensagem da pessoa seja só uma palavra ou tema solto (ex: "rateio", "atraso"), trate como se fosse uma pergunta sobre aquele assunto e explique usando o trecho encontrado. NÃO peça clarificação se já existe um trecho relevante.
+2. Só faça UMA pergunta de clarificação curta se NÃO houver nenhum trecho encontrado e a mensagem for realmente vaga.
+3. Se mesmo após tentar não houver nada relevante na base completa abaixo, responda SOMENTE: [ESCALAR]
+4. Nunca invente informações fora da base.
+5. Mantenha o contexto de toda a conversa.
 
-BASE DE CONHECIMENTO:
+BASE COMPLETA DE CONHECIMENTO (para contexto adicional, caso os trechos acima não bastem):
 ${kb}`;
 
   const res = await fetch(APPS_SCRIPT_URL, {
