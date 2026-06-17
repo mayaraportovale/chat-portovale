@@ -429,11 +429,10 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f0f2f5}
     <div class="tab-view active" id="tab-chat">
       <div class="messages" id="messages"></div>
       <div class="suggestions" id="suggestions">
-        <div class="sug-chip" data-q="Como abro um ticket?">🎫 Abrir ticket</div>
-        <div class="sug-chip" data-q="Como verifico pendências do dia?">📋 Pendências</div>
         <div class="sug-chip" data-q="Como funciona a ABAC?">🎓 ABAC</div>
-        <div class="sug-chip" data-q="Como cancelo uma proposta?">📄 Proposta</div>
-        <div class="sug-chip" data-q="Como solicito suporte de TI?">💻 TI</div>
+        <div class="sug-chip" data-q="Como abro um ticket?">🎫 Ticket</div>
+        <div class="sug-chip" data-q="Como funciona o Mural de Avisos?">📌 Mural</div>
+        <div class="sug-chip" id="chip-duvidas">❓ Dúvidas</div>
       </div>
       <div class="chat-input-area">
         <textarea id="msg-input" placeholder="Digite sua dúvida…" rows="1"></textarea>
@@ -891,6 +890,18 @@ const SYNONYM_MAP = {
   'cliente': ['cadastro de cliente', 'colaborador'],
   'aviso': ['mural', 'comunicado'],
   'comunicado': ['mural', 'aviso'],
+  'mural': ['aviso', 'comunicado'],
+  'inscrição': ['ABAC', 'matrícula', 'curso'],
+  'matrícula': ['ABAC', 'inscrição', 'curso'],
+  'rateio': ['negociação', 'parcela em atraso', 'parcela'],
+  'atraso': ['rateio', 'parcela em atraso', 'assembleia', 'cancelamento'],
+  'atrasada': ['rateio', 'parcela em atraso', 'assembleia'],
+  'parcela': ['boleto', 'rateio', 'atraso', 'assembleia'],
+  'assembleia': ['rateio', 'atraso', 'parcela', 'pagamento'],
+  'cota': ['status da cota', 'rateio', 'cancelamento', 'titularidade'],
+  'comprovante': ['baixa', 'pagamento', 'boleto'],
+  'opt-in': ['autorização', 'boleto', 'negociação'],
+  'negociação': ['rateio', 'parcela em atraso', 'opt-in'],
 };
 
 function expandKeywords(text){
@@ -1362,7 +1373,17 @@ sendBtn.onclick = () => sendMsg(msgInput.value);
 
 // Chips
 document.querySelectorAll('.sug-chip').forEach(c => {
-  c.onclick = () => sendMsg(c.dataset.q);
+  c.onclick = () => {
+    if(c.dataset.q){
+      sendMsg(c.dataset.q);
+    } else {
+      // Chip "Dúvidas": não envia texto genérico (palavra "dúvidas" colide
+      // com o trecho de boletos/extratos na busca por palavras-chave).
+      // Em vez disso, foca o campo para a pessoa digitar a pergunta real,
+      // que será interpretada certinho pelo searchKB.
+      msgInput.focus();
+    }
+  };
 });
 
 // ══════════════════════════════════════════════
