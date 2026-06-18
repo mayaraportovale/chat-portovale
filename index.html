@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Portal Porto Vale — Assistente IA</title>
+<title>GRE Conecta — Suporte Inteligente</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -25,6 +25,7 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f0f2f5}
   border-radius:9px;display:flex;align-items:center;justify-content:center}
 .nav-logo .logo-mark i{font-size:19px;color:#fff}
 .nav-logo .brand{font-size:13px;font-weight:800;color:#1d4ed8;letter-spacing:.2px}
+.nav-logo img{height:40px;margin-right:12px}
 .nav-logo .sub{font-size:10px;color:#9ca3af;letter-spacing:.6px;text-transform:uppercase;margin-top:1px}
 .nav-right{display:flex;align-items:center;gap:14px}
 .nav-status{display:flex;align-items:center;gap:5px;font-size:12px;color:#6b7280;
@@ -109,6 +110,8 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f0f2f5}
 .ph-avatar i{font-size:18px;color:#fff}
 .ph-info{flex:1}
 .ph-name{font-size:13.5px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px}
+.ph-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.bot-av img{width:100%;height:100%;border-radius:50%;object-fit:cover}
 .ph-name .badge-ia{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.3);
   border-radius:4px;font-size:9px;font-weight:700;padding:1px 5px;letter-spacing:.5px}
 .ph-status{font-size:11px;color:rgba(255,255,255,.65);margin-top:2px;display:flex;align-items:center;gap:5px}
@@ -361,8 +364,8 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f0f2f5}
 <div class="portal">
   <nav class="navbar">
     <div class="nav-logo">
-      <div class="logo-mark"><i class="ti ti-question-mark"></i></div>
-      <div><div class="brand">PORTO VALE</div><div class="sub">Portal do Corretor</div></div>
+      <img src="logo_gre_conecta_v3.png" alt="Logo GRE Conecta">
+      <div><div class="brand">GRE CONECTA</div><div class="sub">Suporte Inteligente</div></div>
     </div>
     <div class="nav-right">
       <div class="nav-status"><div class="dot-green"></div>Sistema operacional</div>
@@ -407,9 +410,9 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f0f2f5}
 
     <!-- Header -->
     <div class="panel-header">
-      <div class="ph-avatar"><i class="ti ti-question-mark"></i></div>
-      <div class="ph-info">
-        <div class="ph-name">Lead <span class="badge-ia">IA</span></div>
+<div class="ph-avatar"><img src="val_persona.png" alt="Val"></div>
+	      <div class="ph-info">
+	        <div class="ph-name">GRE Conecta <span class="badge-ia">IA</span></div>
         <div class="ph-status"><div class="ph-dot"></div>Online · responde em segundos</div>
       </div>
       <div class="ph-actions">
@@ -440,7 +443,7 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f0f2f5}
       </div>
       <div class="chat-footer">
         <i class="ti ti-lock"></i>
-        <span>Lead IA · Porto Vale Consórcio</span>
+        <span>Val IA · GRE Conecta</span>
       </div>
     </div>
 
@@ -542,7 +545,7 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f0f2f5}
 // ══════════════════════════════════════════════
 //  CONFIG
 // ══════════════════════════════════════════════
-const AGENT_NAME   = 'Lead';
+const AGENT_NAME   = 'Val';
 const WHATSAPP_TEAM = [
   { name:'Mayara', num:'551236002689' },
   { name:'Luana',  num:'551236003504' },
@@ -677,8 +680,11 @@ let kb          = DEFAULT_KB; // valor inicial; atualizado pelo Firestore em loa
 async function loadKB(){
   try {
     const doc = await db.collection('config').doc('kb').get();
-    if(doc.exists && doc.data().content){
+    if(doc.exists && doc.data().content && doc.data().content.trim().length > 10){
       kb = doc.data().content;
+      console.log('Base de conhecimento carregada do Firestore.');
+    } else {
+      console.log('Firestore sem base válida, usando DEFAULT_KB.');
     }
   } catch(err){
     console.warn('Não foi possível carregar a base de conhecimento do Firestore, usando a padrão.', err);
@@ -748,7 +754,7 @@ function addMsg(role, html, extras={}){
   if(role === 'bot'){
     const av = document.createElement('div');
     av.className = 'bot-av';
-    av.innerHTML = '<i class="ti ti-question-mark"></i>';
+    av.innerHTML = '<img src="val_persona.png" alt="Val">';
     row.appendChild(av);
   }
 
@@ -937,14 +943,16 @@ function tokenize(str){
   return normalizeText(str)
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
-    .filter(t => t.length > 2 && !STOPWORDS.has(t));
+    .filter(t => t.length >= 2 && !STOPWORDS.has(t));
 }
 
 function parseKB(kbText){
-  const parts = kbText.split(/\nP:/);
+  // Normaliza quebras de linha e divide por P:
+  const normalized = kbText.replace(/\r\n/g, '\n');
+  const parts = normalized.split(/\nP:/);
   const entries = [];
   parts.forEach((part, i) => {
-    const block = (i === 0 ? part : 'P:' + part).trim();
+    const block = (i === 0 ? (part.startsWith('P:') ? part : 'P:' + part) : 'P:' + part).trim();
     if(!block.startsWith('P:')) return;
     const qMatch = block.match(/^P:\s*([^\n]+)/);
     const rMatch = block.match(/\nR:\s*([\s\S]*)/);
@@ -986,6 +994,8 @@ function searchKB(userMsg, kbText, topN = 4){
 
 async function callClaude(userMsg){
   const topMatches = searchKB(userMsg, kb, 4);
+  console.log('Busca na KB para:', userMsg, 'Encontrados:', topMatches.length);
+  
   const relevantSection = topMatches.length
     ? topMatches.map(m => `P: ${m.question}\nR: ${m.answer}`).join('\n\n')
     : '(nenhum trecho com correspondência direta de palavras-chave — revise a base completa abaixo)';
@@ -1023,7 +1033,7 @@ ${kb}`;
     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS no Apps Script
     body: JSON.stringify({
       action: 'chat',
-      model: 'claude-sonnet-4-6',
+      model: 'claude-3-5-sonnet-20240620',
       max_tokens: 1000,
       system: systemPrompt,
       messages: [...history, { role: 'user', content: userMsg }]
@@ -1130,7 +1140,7 @@ window.doTicket = () => {
 window.newChat = newChat;
 
 function showWelcome(){
-  addMsg('bot', `Olá! 👋 Sou o <strong>${AGENT_NAME}</strong>, assistente virtual do Portal Porto Vale.<br><br>Antes de começar, como você gostaria de ser chamado(a)?`);
+  addMsg('bot', `Olá! 👋 Sou a <strong>${AGENT_NAME}</strong>, sua assistente do GRE Conecta.<br><br>Antes de começar, como você gostaria de ser chamado(a)?`);
   awaitingName = true;
   sugWrap.style.display = 'none';
 }
