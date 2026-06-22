@@ -917,21 +917,11 @@ async function typedMsg(html){
 }
 
 async function retryOrEscalate(){
-  clarifyTry++;
   analytics.clarifications++;
   saveAnalytics();
   const who = userName ? `, ${userName}` : '';
-  if(clarifyTry >= 2){
-    await typedMsg(`Parece que não consigo resolver isso por aqui${who}. 😕<br>Vou te conectar com a equipe:`);
-    showEscalation();
-    return;
-  }
-  const probes = [
-    `Pode me contar com mais detalhes${who}? Em qual parte do portal isso acontece?`,
-    'Me dá um pouco mais de contexto — é sobre ticket, proposta, ABAC, ou outro assunto?',
-    `Qual o erro ou situação exata que está encontrando${who}? Assim consigo te ajudar melhor. 🙂`,
-  ];
-  await typedMsg(probes[clarifyTry % probes.length]);
+  await typedMsg(`Entendido${who}! 😊 Nossa equipe pode te ajudar com isso agora:`);
+  showEscalation();
 }
 
 // Mapa de sinônimos / termos do dia a dia → temas da base de conhecimento.
@@ -1141,6 +1131,22 @@ async function sendMsg(text){
   msgCount++;
   sessionMsgs++;
 
+  // ── Detecta despedida / encerramento ──
+  const farewellPhrases = ['obrigad','valeu','obg','vlw','tchau','ate mais','flw','falou','encerrar','encerra','era isso','era tudo','por enquanto','so isso'];
+  const lowerText = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const isFarewell = farewellPhrases.some(p => lowerText.includes(p));
+  if(isFarewell && msgCount > 1){
+    addMsg('user', text.replace(/</g,'&lt;'));
+    const who = userName ? ', ' + userName : '';
+    const {bub} = addMsg('bot', '', {noTime:true});
+    bub.classList.remove('bubble');
+    bub.innerHTML = '<div class="esc-card"><div class="esc-label"><i class="ti ti-circle-check" style="color:#16a34a"></i> Fico feliz em ter ajudado' + who + '! 😊</div><div style="font-size:12px;color:#6b7280;margin-bottom:10px">Ficou alguma pendência? Posso abrir um ticket ou te conectar com a equipe.</div><div class="esc-grid"><button class="esc-btn wa" onclick="doWhatsApp()"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button><button class="esc-btn ticket" onclick="doTicket()"><i class="ti ti-ticket"></i> Abrir ticket</button><button class="esc-btn new-chat" onclick="doFarewellClose()" style="background:#f0fdf4;color:#16a34a"><i class="ti ti-logout"></i> Não, pode encerrar!</button></div></div>';
+    scrollEnd();
+    isTyping = false;
+    sendBtn.disabled = !msgInput.value.trim();
+    return;
+  }
+
   // Track topic keywords
   const topicWords = text.toLowerCase().match(/\b(ticket|proposta|abac|boleto|extrato|cota|login|senha|comissão|relatório|cliente|whatsapp|ti|manutenção|compra|colaborador|mural|tratativa)\b/g);
   if(topicWords) topicWords.forEach(w => {
@@ -1166,7 +1172,7 @@ async function sendMsg(text){
     if(clarifyTry === 1){
       await typedMsg(`Hmm, não encontrei diretamente${userName ? ', ' + userName : ''}. 🤔<br>Pode me dar mais detalhes? Por exemplo: em qual parte do portal isso acontece?`);
     } else {
-      addMsg('bot', `Não encontrei essa resposta na minha base${userName ? ', ' + userName : ''}, mas nossa equipe pode te ajudar agora! 👇`);
+      await typedMsg(`Ainda não encontrei uma resposta para isso${userName ? ', ' + userName : ''}. 😕<br>Mas nossa equipe pode te ajudar agora! 👇`);
       showEscalation();
       clarifyTry = 0;
     }
@@ -1205,6 +1211,7 @@ window.doTicket = () => {
   window.open(TICKET_URL, '_blank');
 };
 window.newChat = newChat;
+window.doFarewellClose = () => { openNpsModal(); };
 
 function showWelcome(){
   addMsg('bot', `Olá! 👋 Sou a <strong>${AGENT_NAME}</strong>, sua assistente do GRE Conecta.<br><br>Antes de começar, como você gostaria de ser chamado(a)?`);
