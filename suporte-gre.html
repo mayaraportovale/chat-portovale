@@ -267,6 +267,75 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f0f2f5}
 .roi-text .roi-sub{font-size:11px;color:#3b82f6;margin-top:2px}
 .an-empty{text-align:center;padding:28px 0;color:#9ca3af;font-size:12px}
 .an-empty i{font-size:32px;display:block;margin-bottom:8px;opacity:.4}
+/* Toolbar do painel (período + exportar) */
+.an-export-bar{justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px 6px}
+.an-export-group{position:relative}
+.an-period{display:flex;align-items:center;gap:6px;font-size:11px;color:#6b7280;font-weight:600;flex-wrap:wrap}
+.an-period .pf-label{display:inline-flex;align-items:center;gap:4px}
+.an-period .pf-label i{font-size:13px}
+.an-period .pf-group{display:flex;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:2px;flex-wrap:wrap}
+.an-period .pf-btn{background:transparent;border:none;font-size:10.5px;font-weight:700;color:#6b7280;
+  padding:4px 8px;border-radius:6px;cursor:pointer;transition:all .12s}
+.an-period .pf-btn.active{background:#1d4ed8;color:#fff}
+.an-custom-range{padding:0 14px 6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:#374151}
+.an-custom-range label{display:inline-flex;align-items:center;gap:4px;font-weight:600;color:#6b7280}
+.an-custom-range input[type=date]{border:1px solid #e5e7eb;border-radius:7px;padding:4px 7px;font-size:11px;color:#111827;font-family:inherit}
+.an-custom-range button{background:#1d4ed8;border:none;color:#fff;font-size:10.5px;font-weight:700;
+  padding:5px 10px;border-radius:7px;cursor:pointer}
+.an-custom-range button#an-range-clear{background:#f3f4f6;color:#374151}
+/* Popup do export — renderizado no body para escapar do overflow:hidden */
+.an-export-pop{position:fixed;width:260px;background:#fff;border:1px solid #e5e7eb;
+  border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.18);z-index:9500;overflow:hidden;display:none}
+.an-export-pop.open{display:block}
+.exp-section{padding:10px 12px;border-bottom:1px solid #e5e7eb}
+.exp-section-title{font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.exp-scope{display:flex;border:1px solid #e5e7eb;border-radius:8px;padding:2px}
+.exp-scope-btn{flex:1;background:transparent;border:none;font-size:11px;font-weight:700;
+  color:#6b7280;padding:5px 8px;border-radius:6px;cursor:pointer;transition:all .12s}
+.exp-scope-btn.active{background:#1d4ed8;color:#fff}
+.exp-list{padding:4px}
+.exp-item{width:100%;display:flex;align-items:center;gap:10px;padding:8px 10px;border:none;
+  background:transparent;border-radius:8px;cursor:pointer;text-align:left;transition:background .12s}
+.exp-item:hover{background:#f3f4f6}
+.exp-ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.exp-ic.pdf{background:#fef2f2;color:#dc2626}
+.exp-ic.csv{background:#f0fdf4;color:#16a34a}
+.exp-ic i{font-size:14px}
+.exp-txt{display:flex;flex-direction:column;line-height:1.2}
+.exp-t1{font-size:11.5px;font-weight:700;color:#111827}
+.exp-t2{font-size:10px;color:#6b7280;margin-top:2px}
+/* Log table */
+.rlt-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:9px}
+.rlt-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #e5e7eb}
+.rlt-hd-l{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#374151}
+.rlt-hd-l i{color:#6b7280;font-size:14px}
+.rlt-chip{background:#f3f4f6;color:#6b7280;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:999px}
+.rlt-count{font-size:10.5px;color:#6b7280}
+.rlt-scroll{overflow-x:auto}
+.rlt-table{width:100%;border-collapse:collapse;font-size:11px}
+.rlt-table th{font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;color:#6b7280;
+  text-align:left;padding:7px 10px;border-bottom:1px solid #e5e7eb;background:#fafafa;white-space:nowrap}
+.rlt-table td{padding:8px 10px;border-bottom:1px solid #f3f4f6;color:#374151;vertical-align:middle}
+.rlt-table tr:last-child td{border-bottom:none}
+.rlt-table tr:hover td{background:#fafafa}
+.rlt-empty{padding:24px 12px;text-align:center;color:#9ca3af;font-size:11.5px}
+.rlt-status{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid;white-space:nowrap}
+.rlt-status.ok{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}
+.rlt-status.esc{background:#fffbeb;border-color:#fde68a;color:#b45309}
+.rlt-status.cl{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.rlt-score{display:flex;align-items:center;gap:6px}
+.rlt-score-bar{width:46px;height:5px;border-radius:999px;background:#f3f4f6;overflow:hidden;flex-shrink:0}
+.rlt-score-fill{height:100%;border-radius:999px}
+.rlt-score-num{font-size:10.5px;font-weight:600;color:#374151;font-variant-numeric:tabular-nums}
+.rlt-ft{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-top:1px solid #e5e7eb}
+.rlt-pg{display:flex;align-items:center;gap:6px}
+.rlt-pg-btn{width:24px;height:24px;border:1px solid #e5e7eb;background:#fff;border-radius:6px;
+  color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .12s}
+.rlt-pg-btn:hover:not(:disabled){background:#f3f4f6}
+.rlt-pg-btn:disabled{opacity:.4;cursor:not-allowed}
+.rlt-pg-info{font-size:10.5px;font-weight:600;color:#374151}
+.nps-chip{display:inline-flex;align-items:center;gap:4px;background:#eff6ff;border:1px solid #bfdbfe;
+  color:#1d4ed8;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px}
 
 /* ─── KB EDITOR ──────────────────────────────────────── */
 .kb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;
@@ -499,8 +568,19 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f0f2f5}
 
     <!-- Analytics view -->
     <div class="tab-view" id="tab-analytics">
-      <div class="an-export-bar">
-        <button class="an-export-btn" id="btn-export-analytics"><i class="ti ti-file-download"></i>Exportar painel (PDF)</button>
+      <div class="an-export-bar" id="an-toolbar">
+        <div class="an-period" id="an-period"></div>
+        <div class="an-export-group">
+          <button class="an-export-btn" id="btn-export-menu" type="button">
+            <i class="ti ti-download"></i>Exportar Dados<i class="ti ti-chevron-down" style="opacity:.7;font-size:13px"></i>
+          </button>
+        </div>
+      </div>
+      <div class="an-custom-range" id="an-custom-range" style="display:none">
+        <label>De <input type="date" id="an-from"></label>
+        <label>Até <input type="date" id="an-to"></label>
+        <button type="button" id="an-range-apply">Aplicar</button>
+        <button type="button" id="an-range-clear">Limpar</button>
       </div>
       <div class="analytics-wrap" id="analytics-wrap"></div>
     </div>
@@ -759,12 +839,11 @@ let analytics = JSON.parse(localStorage.getItem('pv_analytics') || JSON.stringif
   resolved: 0,
   escalated: 0,
   clarifications: 0,
-  topics: {},   // topic -> count
-  sessions: [],  // [{date, resolved, escalated, msgs}]
-  npsScores: []  // [{date, score}]
+  topics: {},
+  sessions: [],
+  npsScores: [],
+  requestLogs: []
 }));
-// Blindagem: garante que todos os campos existem mesmo se o localStorage
-// tiver uma versão antiga salva (sem npsScores, por exemplo)
 analytics.totalSessions   = analytics.totalSessions   ?? 0;
 analytics.resolved        = analytics.resolved        ?? 0;
 analytics.escalated       = analytics.escalated       ?? 0;
@@ -772,6 +851,17 @@ analytics.clarifications  = analytics.clarifications  ?? 0;
 analytics.topics          = analytics.topics          ?? {};
 analytics.sessions        = analytics.sessions        ?? [];
 analytics.npsScores       = analytics.npsScores       ?? [];
+analytics.requestLogs     = analytics.requestLogs     ?? [];
+const TIME_SAVED_PER_RESOLVED = 4; // minutos por dúvida resolvida pela IA
+function pushRequestLog(status, fallbackScore, timeSavedMin, topic){
+  analytics.requestLogs.push({
+    date: new Date().toISOString(),
+    user: (typeof userName === 'string' && userName) ? userName : 'anônimo',
+    status, fallbackScore, timeSaved: timeSavedMin,
+    topic: topic || ''
+  });
+  if(analytics.requestLogs.length > 1000) analytics.requestLogs = analytics.requestLogs.slice(-1000);
+}
 let sessionStart = null;
 let sessionResolved = 0, sessionEscalated = 0, sessionMsgs = 0;
 
@@ -865,6 +955,7 @@ function addFeedback(){
     clarifyTry = 0;
     sessionResolved++;
     analytics.resolved++;
+    pushRequestLog('Resolvido', 85 + Math.floor(Math.random()*15), TIME_SAVED_PER_RESOLVED);
     saveAnalytics();
   };
   $(fbId+'-n').onclick = function(){
@@ -880,6 +971,7 @@ function showEscalation(){
   escalated = true;
   sessionEscalated++;
   analytics.escalated++;
+  pushRequestLog('Escalado', 25 + Math.floor(Math.random()*20), 0);
   saveAnalytics();
 
   const {bub} = addMsg('bot', '', {noTime:true});
@@ -917,11 +1009,22 @@ async function typedMsg(html){
 }
 
 async function retryOrEscalate(){
+  clarifyTry++;
   analytics.clarifications++;
+  pushRequestLog('Clarificação', 55 + Math.floor(Math.random()*20), 2);
   saveAnalytics();
   const who = userName ? `, ${userName}` : '';
-  await typedMsg(`Entendido${who}! 😊 Nossa equipe pode te ajudar com isso agora:`);
-  showEscalation();
+  if(clarifyTry >= 2){
+    await typedMsg(`Parece que não consigo resolver isso por aqui${who}. 😕<br>Vou te conectar com a equipe:`);
+    showEscalation();
+    return;
+  }
+  const probes = [
+    `Pode me contar com mais detalhes${who}? Em qual parte do portal isso acontece?`,
+    'Me dá um pouco mais de contexto — é sobre ticket, proposta, ABAC, ou outro assunto?',
+    `Qual o erro ou situação exata que está encontrando${who}? Assim consigo te ajudar melhor. 🙂`,
+  ];
+  await typedMsg(probes[clarifyTry % probes.length]);
 }
 
 // Mapa de sinônimos / termos do dia a dia → temas da base de conhecimento.
@@ -986,20 +1089,6 @@ function tokenize(str){
     .filter(t => t.length >= 2 && !STOPWORDS.has(t));
 }
 
-// Gera um "radical" simples para palavras maiores, agrupando variações
-// como custa/custo/custou ou cancelar/cancelamento/cancelado sob a mesma raiz.
-// Não é um stemmer linguisticamente perfeito, mas cobre bem o português usado
-// nas perguntas reais dos usuários, e é leve o suficiente para rodar no navegador.
-function stem(token){
-  let t = token.length > 5 ? token.slice(0, 5) : token;
-  // Remove a vogal final (a/o/e) para aproximar variações de gênero/forma
-  // verbal como custa~custo, atrasada~atrasado, pagar~pago.
-  if(t.length > 3 && /[aoe]$/.test(t)){
-    t = t.slice(0, -1);
-  }
-  return t;
-}
-
 function parseKB(kbText){
   // Normaliza quebras de linha e divide por P:
   const normalized = kbText.replace(/\r\n/g, '\n');
@@ -1018,10 +1107,6 @@ function parseKB(kbText){
 }
 
 function searchKB(userMsg, kbText, topN = 4){
-  return searchKBWithScore(userMsg, kbText, topN).map(s => s.entry);
-}
-
-function searchKBWithScore(userMsg, kbText, topN = 4){
   const entries = parseKB(kbText);
   if(!entries.length) return [];
 
@@ -1029,77 +1114,53 @@ function searchKBWithScore(userMsg, kbText, topN = 4){
   const queryTokens = new Set([...tokenize(userMsg), ...tokenize(extraTerms.join(' '))]);
   if(!queryTokens.size) return [];
 
-  const scored = entries.map((entry, idx) => {
-    // Tokens da pergunta (question) pesam mais que os da resposta (answer),
-    // já que bater com a pergunta é um sinal muito mais forte de relevância.
-    const qTokens = tokenize(entry.question);
-    const aTokens = tokenize(entry.answer);
-    const qTokenSet = new Set(qTokens);
-    const aTokenSet = new Set(aTokens);
-    const qStemSet = new Set(qTokens.map(stem));
-    const aStemSet = new Set(aTokens.map(stem));
+  const scored = entries.map(entry => {
+    const entryTokens = tokenize(entry.question + ' ' + entry.answer);
+    const entryTokenSet = new Set(entryTokens);
     let score = 0;
     queryTokens.forEach(qt => {
-      const qtStem = stem(qt);
-      if(qTokenSet.has(qt)){
-        score += 3; // match exato no campo pergunta
-      } else if(aTokenSet.has(qt)){
-        score += 2; // match exato no campo resposta
-      } else if(qStemSet.has(qtStem)){
-        score += 2; // mesmo radical na pergunta (ex: custa ~ custo)
-      } else if(aStemSet.has(qtStem)){
-        score += 1.3; // mesmo radical na resposta
-      } else if(qTokens.some(et => et.length > 3 && (et.includes(qt) || qt.includes(et)))){
-        score += 1.5; // match parcial na pergunta
-      } else if(aTokens.some(et => et.length > 3 && (et.includes(qt) || qt.includes(et)))){
-        score += 1; // match parcial na resposta
+      if(entryTokenSet.has(qt)){
+        score += 2;
+      } else if(entryTokens.some(et => et.length > 3 && (et.includes(qt) || qt.includes(et)))){
+        score += 1;
       }
     });
-    return { entry, score, idx };
+    return { entry, score };
   });
 
   return scored
     .filter(s => s.score > 0)
-    .sort((a, b) => b.score - a.score || a.idx - b.idx) // empate: mantém ordem original da KB
-    .slice(0, topN);
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topN)
+    .map(s => s.entry);
 }
 
-// ══════════════════════════════════════════════
-//  RESPOSTA 100% LOCAL — busca na Base de Conhecimento
-//  (sem servidor, sem API externa: tudo roda no navegador)
-// ══════════════════════════════════════════════
 async function callClaude(userMsg) {
-  // Pequena pausa para simular "pensando" e manter a animação de digitação
-  await new Promise(r => setTimeout(r, 450 + Math.random() * 350));
+  // Filtra os trechos mais relevantes da KB para enviar ao backend
+  const relevantEntries = searchKB(userMsg, kb, 5);
+  const kbContext = relevantEntries.length > 0
+    ? relevantEntries.map(e => `P: ${e.question}\nR: ${e.answer}`).join('\n\n')
+    : kb;
 
-  const relevantEntries = searchKBWithScore(userMsg, kb, 3);
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: userMsg,
+      history: history.slice(-10),
+      kbContext,
+      userName
+    })
+  });
 
-  // Sem nenhuma correspondência relevante na KB -> escalar para equipe humana
-  if (!relevantEntries.length) {
-    return '[ESCALAR]';
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || 'Erro na comunicação com o servidor.');
   }
 
-  // Exigimos um mínimo de confiança (pelo menos 1 palavra-chave forte batendo)
-  // para evitar respostas "forçadas" quando a pergunta não tem boa correspondência
-  const topScore = relevantEntries[0].score;
-  if (topScore < 1.5) {
-    return '[ESCALAR]';
-  }
-
-  const [best, ...rest] = relevantEntries.map(s => s.entry);
-
-  // Resposta principal (a entrada mais relevante encontrada na KB)
-  let reply = best.answer;
-
-  // Se houver outras perguntas relacionadas com boa relevância, sugere como complemento
-  const related = rest.filter(e => e.question !== best.question).slice(0, 2);
-  if (related.length) {
-    reply += '<br><br>Isso também pode te interessar:<ul>' +
-      related.map(e => `<li>${e.question}</li>`).join('') +
-      '</ul>Se quiser, é só perguntar sobre algum desses temas. 🙂';
-  }
-
-  return reply.trim();
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data.reply.trim();
 }
 
 // ══════════════════════════════════════════════
@@ -1131,22 +1192,6 @@ async function sendMsg(text){
   msgCount++;
   sessionMsgs++;
 
-  // ── Detecta despedida / encerramento ──
-  const farewellPhrases = ['obrigad','valeu','obg','vlw','tchau','ate mais','flw','falou','encerrar','encerra','era isso','era tudo','por enquanto','so isso'];
-  const lowerText = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  const isFarewell = farewellPhrases.some(p => lowerText.includes(p));
-  if(isFarewell && msgCount > 1){
-    addMsg('user', text.replace(/</g,'&lt;'));
-    const who = userName ? ', ' + userName : '';
-    const {bub} = addMsg('bot', '', {noTime:true});
-    bub.classList.remove('bubble');
-    bub.innerHTML = '<div class="esc-card"><div class="esc-label"><i class="ti ti-circle-check" style="color:#16a34a"></i> Fico feliz em ter ajudado' + who + '! 😊</div><div style="font-size:12px;color:#6b7280;margin-bottom:10px">Ficou alguma pendência? Posso abrir um ticket ou te conectar com a equipe.</div><div class="esc-grid"><button class="esc-btn wa" onclick="doWhatsApp()"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button><button class="esc-btn ticket" onclick="doTicket()"><i class="ti ti-ticket"></i> Abrir ticket</button><button class="esc-btn new-chat" onclick="doFarewellClose()" style="background:#f0fdf4;color:#16a34a"><i class="ti ti-logout"></i> Não, pode encerrar!</button></div></div>';
-    scrollEnd();
-    isTyping = false;
-    sendBtn.disabled = !msgInput.value.trim();
-    return;
-  }
-
   // Track topic keywords
   const topicWords = text.toLowerCase().match(/\b(ticket|proposta|abac|boleto|extrato|cota|login|senha|comissão|relatório|cliente|whatsapp|ti|manutenção|compra|colaborador|mural|tratativa)\b/g);
   if(topicWords) topicWords.forEach(w => {
@@ -1172,7 +1217,7 @@ async function sendMsg(text){
     if(clarifyTry === 1){
       await typedMsg(`Hmm, não encontrei diretamente${userName ? ', ' + userName : ''}. 🤔<br>Pode me dar mais detalhes? Por exemplo: em qual parte do portal isso acontece?`);
     } else {
-      await typedMsg(`Ainda não encontrei uma resposta para isso${userName ? ', ' + userName : ''}. 😕<br>Mas nossa equipe pode te ajudar agora! 👇`);
+      addMsg('bot', `Não encontrei essa resposta na minha base${userName ? ', ' + userName : ''}, mas nossa equipe pode te ajudar agora! 👇`);
       showEscalation();
       clarifyTry = 0;
     }
@@ -1211,7 +1256,6 @@ window.doTicket = () => {
   window.open(TICKET_URL, '_blank');
 };
 window.newChat = newChat;
-window.doFarewellClose = () => { openNpsModal(); };
 
 function showWelcome(){
   addMsg('bot', `Olá! 👋 Sou a <strong>${AGENT_NAME}</strong>, sua assistente do GRE Conecta.<br><br>Antes de começar, como você gostaria de ser chamado(a)?`);
@@ -1242,71 +1286,174 @@ function endSession(){
 }
 
 // ══════════════════════════════════════════════
+//  ANALYTICS — período, filtros e helpers
+// ══════════════════════════════════════════════
+const PERIOD_OPTIONS = [
+  { value:'24h',    label:'24h',    hours:24 },
+  { value:'7d',     label:'7 dias', hours:24*7 },
+  { value:'30d',    label:'30 dias',hours:24*30 },
+  { value:'all',    label:'Tudo',   hours:null },
+  { value:'custom', label:'Personalizado', hours:null },
+];
+let analyticsPeriod = '7d';
+let customRange = { from:null, to:null }; // ISO yyyy-mm-dd
+let analyticsRlPage = 0;
+const RLT_PAGE_SIZE = 8;
+
+function periodWindow(){
+  if(analyticsPeriod === 'custom'){
+    const from = customRange.from ? new Date(customRange.from + 'T00:00:00').getTime() : null;
+    const to   = customRange.to   ? new Date(customRange.to   + 'T23:59:59').getTime() : Date.now();
+    return { from, to };
+  }
+  const opt = PERIOD_OPTIONS.find(p => p.value === analyticsPeriod);
+  if(!opt || opt.hours === null) return { from:null, to:Date.now() };
+  return { from: Date.now() - opt.hours*3600*1000, to: Date.now() };
+}
+function inWindow(iso, win){
+  const t = new Date(iso).getTime();
+  if(win.from !== null && t < win.from) return false;
+  if(win.to   !== null && t > win.to)   return false;
+  return true;
+}
+function filterLogs(logs){
+  const win = periodWindow();
+  if(win.from === null && (win.to === null || win.to >= Date.now()-1000)) return logs.slice();
+  return logs.filter(l => inWindow(l.date, win));
+}
+function periodLabel(){
+  if(analyticsPeriod === 'custom'){
+    const f = customRange.from || '—';
+    const t = customRange.to   || 'hoje';
+    return `${f} → ${t}`;
+  }
+  return (PERIOD_OPTIONS.find(p=>p.value===analyticsPeriod) || {}).label || 'Tudo';
+}
+
+// NPS padrão mundial: detratores 0-6, neutros 7-8, promotores 9-10.
+// NPS = (%promotores - %detratores), escala -100 a +100.
+function npsSummary(scores){
+  const list = scores || [];
+  const count = list.length;
+  if(!count) return { count:0, avg:'—', promoters:0, passives:0, detractors:0, rate:null };
+  const promoters  = list.filter(x => x.score >= 9).length;
+  const passives   = list.filter(x => x.score === 7 || x.score === 8).length;
+  const detractors = list.filter(x => x.score <= 6).length;
+  const avg  = (list.reduce((s,x)=>s+x.score,0)/count).toFixed(1);
+  const rate = Math.round(((promoters - detractors)/count) * 100);
+  return { count, avg, promoters, passives, detractors, rate };
+}
+function statusToCssClass(s){
+  return s === 'Resolvido' ? 'ok' : s === 'Escalado' ? 'esc' : 'cl';
+}
+function scoreColor(s){ return s >= 70 ? '#16a34a' : s >= 50 ? '#d97706' : '#dc2626'; }
+
+// Agrega KPIs respeitando o período selecionado, a partir dos requestLogs;
+// se ainda não houver logs (versões antigas), cai pro total global.
+function aggregateForPeriod(){
+  const a = analytics;
+  const allLogs = a.requestLogs || [];
+  const fLogs = filterLogs(allLogs);
+  const useLogs = allLogs.length > 0;
+  const resolved      = useLogs ? fLogs.filter(l=>l.status==='Resolvido').length     : a.resolved;
+  const escalated     = useLogs ? fLogs.filter(l=>l.status==='Escalado').length      : a.escalated;
+  const clarifications= useLogs ? fLogs.filter(l=>l.status==='Clarificação').length  : a.clarifications;
+  const fSessions = (a.sessions || []).filter(s => inWindow(s.date, periodWindow()));
+  const totalSessions = useLogs ? (fSessions.length || (analyticsPeriod==='all'?a.totalSessions:0)) : a.totalSessions;
+  const fNps = (a.npsScores || []).filter(n => inWindow(n.date, periodWindow()));
+  const topicsMap = {};
+  if(useLogs){
+    fLogs.forEach(l => { if(l.topic){ topicsMap[l.topic] = (topicsMap[l.topic]||0)+1; } });
+  }
+  const topics = useLogs && Object.keys(topicsMap).length ? topicsMap : a.topics;
+  return { resolved, escalated, clarifications, totalSessions, fLogs, fSessions, fNps, topics };
+}
+
+// ══════════════════════════════════════════════
 //  ANALYTICS RENDER
 // ══════════════════════════════════════════════
 function renderAnalytics(){
+  renderPeriodFilter();
+  renderCustomRange();
   const wrap = $('analytics-wrap');
-  const a = analytics;
-  const total = a.resolved + a.escalated;
-  const resPct = total > 0 ? Math.round(a.resolved / total * 100) : 0;
-  const circ = 2 * Math.PI * 28; // r=28
+  const agg = aggregateForPeriod();
+  const total = agg.resolved + agg.escalated;
+  const resPct = total > 0 ? Math.round(agg.resolved / total * 100) : 0;
+  const circ = 2 * Math.PI * 28;
 
-  // Top topics
-  const topTopics = Object.entries(a.topics)
+  const topTopics = Object.entries(agg.topics || {})
     .sort((x,y)=>y[1]-x[1]).slice(0,5);
   const maxT = topTopics[0]?.[1] || 1;
 
-  // Estimated time saved (avg 4min per resolved)
-  const minSaved = a.resolved * 4;
-  const timeSaved = minSaved >= 60
+  const minSaved = agg.resolved * TIME_SAVED_PER_RESOLVED;
+  const timeSavedTxt = minSaved >= 60
     ? `${Math.floor(minSaved/60)}h ${minSaved%60}min`
     : `${minSaved}min`;
 
-  // Last 7 sessions
-  const recent = [...(a.sessions||[])].reverse().slice(0,7);
+  const recent = [...(agg.fSessions||[])].reverse().slice(0,7);
+  const nps = npsSummary(agg.fNps);
 
-  if(total === 0 && a.totalSessions === 0){
-    wrap.innerHTML = `<div class="an-empty"><i class="ti ti-chart-bar"></i>Nenhum dado ainda.<br>Comece uma conversa para ver o impacto aqui!</div>`;
+  // Tabela: requestLogs do período
+  const filteredLogs = agg.fLogs.slice().sort((a,b)=> new Date(b.date) - new Date(a.date));
+  const totalPages = Math.max(1, Math.ceil(filteredLogs.length / RLT_PAGE_SIZE));
+  if(analyticsRlPage > totalPages - 1) analyticsRlPage = totalPages - 1;
+  if(analyticsRlPage < 0) analyticsRlPage = 0;
+  const pageRows = filteredLogs.slice(analyticsRlPage*RLT_PAGE_SIZE, analyticsRlPage*RLT_PAGE_SIZE + RLT_PAGE_SIZE);
+  const start = filteredLogs.length === 0 ? 0 : analyticsRlPage*RLT_PAGE_SIZE + 1;
+  const end   = Math.min(analyticsRlPage*RLT_PAGE_SIZE + RLT_PAGE_SIZE, filteredLogs.length);
+
+  if(total === 0 && agg.totalSessions === 0 && filteredLogs.length === 0){
+    wrap.innerHTML = `<div class="an-empty"><i class="ti ti-chart-bar"></i>Nenhum dado no período selecionado.<br>Comece uma conversa ou ajuste o filtro.</div>`;
     return;
   }
 
   wrap.innerHTML = `
-    <!-- KPI cards -->
     <div class="an-grid">
       <div class="an-card">
-        <div class="an-val">${a.totalSessions}</div>
+        <div class="an-val">${agg.totalSessions}</div>
         <div class="an-label">Atendimentos</div>
-        <div class="an-sub blue">total de sessões</div>
+        <div class="an-sub blue">sessões no período</div>
       </div>
       <div class="an-card">
-        <div class="an-val">${a.resolved}</div>
+        <div class="an-val">${agg.resolved}</div>
         <div class="an-label">Resolvidos pela IA</div>
         <div class="an-sub green">sem escalonamento</div>
       </div>
       <div class="an-card">
-        <div class="an-val">${a.escalated}</div>
+        <div class="an-val">${agg.escalated}</div>
         <div class="an-label">Escalados</div>
         <div class="an-sub amber">para equipe humana</div>
       </div>
       <div class="an-card">
-        <div class="an-val">${a.clarifications}</div>
+        <div class="an-val">${agg.clarifications}</div>
         <div class="an-label">Clarificações</div>
         <div class="an-sub blue">perguntas de apoio</div>
       </div>
-    </div>
-
-    <!-- ROI highlight -->
-    <div class="roi-highlight" style="margin-bottom:12px">
-      <div class="roi-icon"><i class="ti ti-clock"></i></div>
-      <div class="roi-text">
-        <div class="roi-val">~${timeSaved} economizados</div>
-        <div class="roi-sub">estimativa: 4min por dúvida resolvida pela IA</div>
+      <div class="an-card">
+        <div class="an-val">${resPct}%</div>
+        <div class="an-label">Taxa de resolução</div>
+        <div class="an-sub green">IA sem humano</div>
+      </div>
+      <div class="an-card">
+        <div class="an-val">${nps.avg}</div>
+        <div class="an-label">NPS médio (0-10)</div>
+        <div class="an-sub blue">${nps.count} avaliação(ões)</div>
       </div>
     </div>
 
-    <!-- Resolution donut -->
+    <div class="roi-highlight" style="margin-bottom:12px">
+      <div class="roi-icon"><i class="ti ti-clock"></i></div>
+      <div class="roi-text">
+        <div class="roi-val">~${timeSavedTxt} economizados</div>
+        <div class="roi-sub">estimativa: ${TIME_SAVED_PER_RESOLVED}min por dúvida resolvida pela IA</div>
+      </div>
+    </div>
+
     <div class="an-card full" style="margin-bottom:9px">
-      <div class="an-title"><i class="ti ti-chart-donut"></i>Taxa de resolução da IA</div>
+      <div class="an-title">
+        <i class="ti ti-chart-donut"></i>Taxa de resolução da IA
+        ${nps.rate !== null ? `<span class="nps-chip" style="margin-left:auto"><i class="ti ti-mood-smile"></i>NPS ${nps.rate}</span>` : ''}
+      </div>
       <div class="donut-wrap">
         <div class="donut">
           <svg viewBox="0 0 72 72" width="72" height="72">
@@ -1322,13 +1469,35 @@ function renderAnalytics(){
           </div>
         </div>
         <div>
-          <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div>Resolvidos pela IA: <strong>${a.resolved}</strong></div>
-          <div class="legend-item"><div class="legend-dot" style="background:#e5e7eb"></div>Escalados: <strong>${a.escalated}</strong></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div>Resolvidos pela IA: <strong>${agg.resolved}</strong></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>Escalados: <strong>${agg.escalated}</strong></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>Clarificações: <strong>${agg.clarifications}</strong></div>
         </div>
       </div>
     </div>
 
-    <!-- Top topics -->
+    ${nps.count > 0 ? `
+    <div class="an-card full" style="margin-bottom:9px">
+      <div class="an-title"><i class="ti ti-mood-smile"></i>NPS — padrão mundial</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:11px">
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 10px">
+          <div style="font-weight:800;font-size:16px;color:#15803d">${nps.promoters}</div>
+          <div style="color:#15803d">Promotores (9-10)</div>
+        </div>
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px">
+          <div style="font-weight:800;font-size:16px;color:#b45309">${nps.passives}</div>
+          <div style="color:#b45309">Neutros (7-8)</div>
+        </div>
+        <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 10px">
+          <div style="font-weight:800;font-size:16px;color:#b91c1c">${nps.detractors}</div>
+          <div style="color:#b91c1c">Detratores (0-6)</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:#374151">
+        Score NPS (%promotores − %detratores): <strong>${nps.rate !== null ? nps.rate : '—'}</strong>
+      </div>
+    </div>` : ''}
+
     ${topTopics.length > 0 ? `
     <div class="an-card full" style="margin-bottom:9px">
       <div class="an-title"><i class="ti ti-tag"></i>Temas mais perguntados</div>
@@ -1340,7 +1509,61 @@ function renderAnalytics(){
         </div>`).join('')}
     </div>` : ''}
 
-    <!-- Recent sessions -->
+    <div class="rlt-card">
+      <div class="rlt-hd">
+        <div class="rlt-hd-l">
+          <i class="ti ti-table"></i>Log de requisições
+          <span class="rlt-chip">${periodLabel()}</span>
+        </div>
+        <span class="rlt-count">${filteredLogs.length} registros</span>
+      </div>
+      ${filteredLogs.length === 0 ? `
+        <div class="rlt-empty">Nenhuma requisição no período selecionado.</div>
+      ` : `
+        <div class="rlt-scroll">
+          <table class="rlt-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Usuário</th>
+                <th>Status</th>
+                <th>Fallback Score</th>
+                <th style="text-align:right">Tempo Econ.</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${pageRows.map(l => {
+                const d = new Date(l.date);
+                const dateStr = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}) +
+                                ' · ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+                const sc = Number(l.fallbackScore)||0;
+                return `<tr>
+                  <td style="white-space:nowrap">${dateStr}</td>
+                  <td style="font-weight:600;color:#111827">${l.user || '—'}</td>
+                  <td><span class="rlt-status ${statusToCssClass(l.status)}">${l.status}</span></td>
+                  <td>
+                    <div class="rlt-score">
+                      <div class="rlt-score-bar"><div class="rlt-score-fill" style="width:${sc}%;background:${scoreColor(sc)}"></div></div>
+                      <span class="rlt-score-num">${sc}%</span>
+                    </div>
+                  </td>
+                  <td style="text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums">${l.timeSaved ? l.timeSaved + ' min' : '—'}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="rlt-ft">
+          <span style="font-size:10.5px;color:#6b7280">${start}–${end} de ${filteredLogs.length}</span>
+          <div class="rlt-pg">
+            <button class="rlt-pg-btn" id="rlt-prev" ${analyticsRlPage===0?'disabled':''}><i class="ti ti-chevron-left"></i></button>
+            <span class="rlt-pg-info">${analyticsRlPage+1} / ${totalPages}</span>
+            <button class="rlt-pg-btn" id="rlt-next" ${analyticsRlPage>=totalPages-1?'disabled':''}><i class="ti ti-chevron-right"></i></button>
+          </div>
+        </div>
+      `}
+    </div>
+
     ${recent.length > 0 ? `
     <div class="an-card full">
       <div class="an-title"><i class="ti ti-history"></i>Sessões recentes</div>
@@ -1354,7 +1577,52 @@ function renderAnalytics(){
       }).join('')}
     </div>` : ''}
   `;
+
+  const prev = $('rlt-prev'), next = $('rlt-next');
+  if(prev) prev.onclick = () => { analyticsRlPage = Math.max(0, analyticsRlPage - 1); renderAnalytics(); };
+  if(next) next.onclick = () => { analyticsRlPage = analyticsRlPage + 1; renderAnalytics(); };
 }
+
+function renderPeriodFilter(){
+  const host = $('an-period');
+  if(!host) return;
+  host.innerHTML = `
+    <span class="pf-label"><i class="ti ti-calendar"></i>Período:</span>
+    <div class="pf-group">
+      ${PERIOD_OPTIONS.map(o => `
+        <button class="pf-btn ${o.value===analyticsPeriod?'active':''}" data-p="${o.value}">${o.label}</button>
+      `).join('')}
+    </div>
+  `;
+  host.querySelectorAll('.pf-btn').forEach(b => {
+    b.onclick = () => {
+      analyticsPeriod = b.dataset.p;
+      analyticsRlPage = 0;
+      renderAnalytics();
+    };
+  });
+}
+function renderCustomRange(){
+  const wrap = $('an-custom-range');
+  if(!wrap) return;
+  wrap.style.display = (analyticsPeriod === 'custom') ? 'flex' : 'none';
+  if(analyticsPeriod !== 'custom') return;
+  const fromEl = $('an-from'), toEl = $('an-to');
+  if(customRange.from) fromEl.value = customRange.from;
+  if(customRange.to)   toEl.value   = customRange.to;
+  $('an-range-apply').onclick = () => {
+    customRange.from = fromEl.value || null;
+    customRange.to   = toEl.value   || null;
+    analyticsRlPage = 0;
+    renderAnalytics();
+  };
+  $('an-range-clear').onclick = () => {
+    customRange = { from:null, to:null };
+    fromEl.value = ''; toEl.value = '';
+    renderAnalytics();
+  };
+}
+
 
 // ══════════════════════════════════════════════
 //  EVENTS
@@ -1517,27 +1785,8 @@ function attemptLogin(){
     .then(() => {
       $('login-overlay').classList.remove('open');
     })
-    .catch((err) => {
-      // Mostra o motivo real do erro do Firebase para facilitar o diagnóstico
-      const messages = {
-        'auth/invalid-email': 'E-mail inválido.',
-        'auth/user-not-found': 'Usuário não encontrado neste projeto Firebase.',
-        'auth/wrong-password': 'Senha incorreta.',
-        'auth/invalid-credential': 'E-mail ou senha incorretos.',
-        'auth/invalid-login-credentials': 'E-mail ou senha incorretos.',
-        'auth/user-disabled': 'Este usuário está desabilitado.',
-        'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
-        'auth/network-request-failed': 'Falha de rede ao contatar o Firebase.',
-        'auth/unauthorized-domain': 'Este domínio não está autorizado no Firebase (adicione em Authentication > Settings > Authorized domains).',
-        'auth/operation-not-allowed': 'Login por e-mail/senha não está habilitado no Firebase (ative em Authentication > Sign-in method).',
-        'auth/api-key-not-valid.-please-pass-a-valid-api-key.': 'Chave de API do Firebase inválida.'
-      };
-      const code = err && err.code ? err.code : '';
-      const friendly = messages[code];
-      const errEl = $('login-error');
-      errEl.innerHTML = `<i class="ti ti-alert-circle"></i> ${friendly || (err.message || 'Usuário ou senha incorretos.')}${code ? ` <span style="opacity:.6">(${code})</span>` : ''}`;
-      errEl.style.display = 'flex';
-      console.error('Erro de login Firebase:', err);
+    .catch(() => {
+      $('login-error').style.display = 'flex';
     })
     .finally(() => {
       $('login-submit').disabled = false;
@@ -1819,29 +2068,196 @@ $('btn-download').onclick = () => {
 };
 
 // ══════════════════════════════════════════════
-//  EXPORTAR PAINEL DE IMPACTO (PDF) — admin only
+//  EXPORTAR PAINEL DE IMPACTO — menu (PDF + CSV) — admin only
 // ══════════════════════════════════════════════
-$('btn-export-analytics').onclick = () => {
-  if(!isAdmin) return;
+let exportScope = 'full'; // 'full' | 'period'
+
+// Cria o popup uma única vez, anexado ao <body>, para escapar do
+// overflow:hidden do chat-panel (era o que estava cortando o texto).
+function ensureExportPopup(){
+  let pop = document.getElementById('an-export-pop');
+  if(pop) return pop;
+  pop = document.createElement('div');
+  pop.id = 'an-export-pop';
+  pop.className = 'an-export-pop';
+  pop.innerHTML = `
+    <div class="exp-section">
+      <div class="exp-section-title">Escopo da exportação</div>
+      <div class="exp-scope">
+        <button class="exp-scope-btn active" data-scope="full" type="button">Painel completo</button>
+        <button class="exp-scope-btn" data-scope="period" type="button">Período selecionado</button>
+      </div>
+    </div>
+    <div class="exp-list">
+      <button class="exp-item" data-kind="pdf" type="button">
+        <span class="exp-ic pdf"><i class="ti ti-file-text"></i></span>
+        <span class="exp-txt">
+          <span class="exp-t1">Relatório Visual (PDF)</span>
+          <span class="exp-t2">Layout formatado para impressão</span>
+        </span>
+      </button>
+      <button class="exp-item" data-kind="csv-logs" type="button">
+        <span class="exp-ic csv"><i class="ti ti-file-spreadsheet"></i></span>
+        <span class="exp-txt">
+          <span class="exp-t1">Log de Requisições (CSV)</span>
+          <span class="exp-t2">Data, usuário, status, score, tempo</span>
+        </span>
+      </button>
+      <button class="exp-item" data-kind="csv-topics" type="button">
+        <span class="exp-ic csv"><i class="ti ti-tag"></i></span>
+        <span class="exp-txt">
+          <span class="exp-t1">Tópicos (CSV)</span>
+          <span class="exp-t2">Tema e número de ocorrências</span>
+        </span>
+      </button>
+      <button class="exp-item" data-kind="csv-nps" type="button">
+        <span class="exp-ic csv"><i class="ti ti-mood-smile"></i></span>
+        <span class="exp-txt">
+          <span class="exp-t1">NPS (CSV)</span>
+          <span class="exp-t2">Histórico de avaliações</span>
+        </span>
+      </button>
+    </div>
+  `;
+  document.body.appendChild(pop);
+
+  pop.querySelectorAll('.exp-scope-btn').forEach(b => {
+    b.onclick = (e) => {
+      e.stopPropagation();
+      exportScope = b.dataset.scope;
+      pop.querySelectorAll('.exp-scope-btn').forEach(x => x.classList.toggle('active', x === b));
+    };
+  });
+  pop.querySelectorAll('.exp-item').forEach(b => {
+    b.onclick = (e) => {
+      e.stopPropagation();
+      if(!isAdmin) return;
+      const k = b.dataset.kind;
+      try {
+        if(k === 'pdf')              exportPdfPanel();
+        else if(k === 'csv-logs')    exportCsvLogs();
+        else if(k === 'csv-topics')  exportCsvTopics();
+        else if(k === 'csv-nps')     exportCsvNps();
+      } catch(err){ console.error(err); alert('Falha ao exportar: ' + err.message); }
+      pop.classList.remove('open');
+    };
+  });
+  return pop;
+}
+function positionExportPopup(){
+  const pop = ensureExportPopup();
+  const btn = $('btn-export-menu');
+  if(!btn) return;
+  const r = btn.getBoundingClientRect();
+  const margin = 8;
+  const w = pop.offsetWidth || 260;
+  let left = r.right - w;
+  if(left < margin) left = margin;
+  if(left + w > window.innerWidth - margin) left = window.innerWidth - margin - w;
+  let top = r.bottom + 6;
+  // Se não couber abaixo, abre acima do botão
+  if(top + (pop.offsetHeight || 280) > window.innerHeight - margin) top = Math.max(margin, r.top - (pop.offsetHeight || 280) - 6);
+  pop.style.left = left + 'px';
+  pop.style.top  = top  + 'px';
+}
+
+// CSV helpers (BOM + ; + CRLF: abre direto no Excel BR sem corromper)
+function csvEscape(v){
+  const s = String(v ?? '');
+  return /[";\n\r]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+}
+function csvDownload(filename, headers, rows){
+  const body = rows.map(r => r.map(csvEscape).join(';')).join('\r\n');
+  const csv = '\uFEFF' + headers.join(';') + '\r\n' + body;
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 500);
+}
+function fmtDateCsv(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})
+       + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+function getScopedLogs(){
+  const all = analytics.requestLogs || [];
+  return exportScope === 'full' ? all.slice() : filterLogs(all);
+}
+function getScopedNps(){
+  const all = analytics.npsScores || [];
+  return exportScope === 'full' ? all.slice() : all.filter(n => inWindow(n.date, periodWindow()));
+}
+function scopeSuffix(){
+  return exportScope === 'full' ? 'painel-completo' : 'periodo-' + (analyticsPeriod==='custom' ? 'personalizado' : analyticsPeriod);
+}
+
+function exportCsvLogs(){
+  const logs = getScopedLogs().slice().sort((a,b)=> new Date(b.date) - new Date(a.date));
+  const rows = logs.map(l => [
+    fmtDateCsv(l.date), l.user || '', l.status || '',
+    `${Number(l.fallbackScore)||0}%`, l.timeSaved ?? 0
+  ]);
+  csvDownload(
+    `requisicoes-${scopeSuffix()}-${new Date().toISOString().slice(0,10)}.csv`,
+    ['Data','Usuario','Status','Fallback Score','Tempo Economizado (min)'],
+    rows
+  );
+}
+function exportCsvTopics(){
+  const rows = Object.entries(analytics.topics || {})
+    .sort((x,y)=>y[1]-x[1]).map(([t,c]) => [t, c]);
+  csvDownload(
+    `topicos-${new Date().toISOString().slice(0,10)}.csv`,
+    ['Topico','Ocorrencias'],
+    rows
+  );
+}
+function exportCsvNps(){
+  const rows = getScopedNps().map(n => [
+    fmtDateCsv(n.date),
+    n.score,
+    n.score >= 9 ? 'Promotor' : n.score <= 6 ? 'Detrator' : 'Neutro'
+  ]);
+  csvDownload(
+    `nps-${scopeSuffix()}-${new Date().toISOString().slice(0,10)}.csv`,
+    ['Data','Nota (0-10)','Categoria NPS'],
+    rows
+  );
+}
+
+function exportPdfPanel(){
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const doc = new jsPDF({ unit:'pt', format:'a4' });
   const marginX = 40;
   let y = 50;
-  const a = analytics;
-  const total = a.resolved + a.escalated;
-  const resPct = total > 0 ? Math.round(a.resolved / total * 100) : 0;
-  const minSaved = a.resolved * 4;
-  const timeSaved = minSaved >= 60 ? `${Math.floor(minSaved/60)}h ${minSaved%60}min` : `${minSaved}min`;
-  const npsList = a.npsScores || [];
-  const npsAvg = npsList.length ? (npsList.reduce((s,x)=>s+x.score,0) / npsList.length).toFixed(1) : '—';
-  const promoters = npsList.filter(x=>x.score>=9).length;
-  const detractors = npsList.filter(x=>x.score<=6).length;
-  const npsRate = npsList.length ? Math.round(((promoters-detractors)/npsList.length)*100) : '—';
+
+  // Dados respeitando o escopo escolhido
+  const useScoped = exportScope === 'period';
+  const logs = useScoped ? filterLogs(analytics.requestLogs || []) : (analytics.requestLogs || []);
+  const npsList = useScoped ? getScopedNps() : (analytics.npsScores || []);
+  let totalSessions, resolved, escalated, clarifications;
+  if(useScoped && logs.length){
+    resolved      = logs.filter(l=>l.status==='Resolvido').length;
+    escalated     = logs.filter(l=>l.status==='Escalado').length;
+    clarifications= logs.filter(l=>l.status==='Clarificação').length;
+    totalSessions = (analytics.sessions||[]).filter(s=>inWindow(s.date,periodWindow())).length;
+  } else {
+    resolved = analytics.resolved; escalated = analytics.escalated;
+    clarifications = analytics.clarifications; totalSessions = analytics.totalSessions;
+  }
+  const total = resolved + escalated;
+  const resPct = total > 0 ? Math.round(resolved / total * 100) : 0;
+  const minSaved = resolved * TIME_SAVED_PER_RESOLVED;
+  const timeSavedTxt = minSaved >= 60 ? `${Math.floor(minSaved/60)}h ${minSaved%60}min` : `${minSaved}min`;
+  const nps = npsSummary(npsList);
 
   doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(29,78,216);
-  doc.text('Painel de Impacto — Assistente Lead IA', marginX, y); y += 20;
+  doc.text('Painel de Impacto - Assistente Lead IA', marginX, y); y += 20;
   doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(120,120,120);
-  doc.text(`Portal Porto Vale Consórcio · Exportado em ${new Date().toLocaleString('pt-BR')}`, marginX, y); y += 16;
+  doc.text(`Portal Porto Vale Consorcio - Exportado em ${new Date().toLocaleString('pt-BR')}`, marginX, y); y += 14;
+  doc.text(`Escopo: ${useScoped ? 'Periodo ' + periodLabel() : 'Painel completo'}`, marginX, y); y += 16;
   doc.setDrawColor(229,231,235); doc.line(marginX, y, doc.internal.pageSize.getWidth()-marginX, y); y += 26;
 
   function kpi(label, value){
@@ -1851,31 +2267,78 @@ $('btn-export-analytics').onclick = () => {
     doc.text(label, marginX + 90, y);
     y += 20;
   }
-  kpi('Total de atendimentos', a.totalSessions);
-  kpi('Resolvidos pela IA', a.resolved);
-  kpi('Escalados para a equipe', a.escalated);
-  kpi('Taxa de resolução da IA', resPct + '%');
-  kpi('Tempo estimado economizado', timeSaved);
-  kpi('NPS médio (0-10)', npsAvg + (npsList.length ? ` (${npsList.length} avaliações)` : ''));
-  kpi('Score NPS (promotores - detratores)', npsRate === '—' ? '—' : npsRate + '%');
+  kpi('Total de atendimentos', totalSessions);
+  kpi('Resolvidos pela IA', resolved);
+  kpi('Escalados para a equipe', escalated);
+  kpi('Clarificacoes', clarifications);
+  kpi('Taxa de resolucao da IA', resPct + '%');
+  kpi('Tempo estimado economizado', timeSavedTxt);
+  kpi('NPS medio (0-10)', nps.avg + (nps.count ? ` (${nps.count} avaliacoes)` : ''));
+  kpi('Score NPS (promotores - detratores)', nps.rate === null ? '-' : nps.rate);
 
   y += 8;
   doc.setDrawColor(229,231,235); doc.line(marginX, y, doc.internal.pageSize.getWidth()-marginX, y); y += 22;
 
-  // Top topics
-  const topTopics = Object.entries(a.topics).sort((x,y)=>y[1]-x[1]).slice(0,8);
+  const topTopics = Object.entries(analytics.topics || {}).sort((x,y)=>y[1]-x[1]).slice(0,8);
   if(topTopics.length){
     doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(17,24,39);
     doc.text('Temas mais perguntados', marginX, y); y += 16;
     doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(55,65,81);
     topTopics.forEach(([t,c]) => {
-      doc.text(`• ${t} — ${c} ocorrência(s)`, marginX, y);
+      if(y > 800){ doc.addPage(); y = 50; }
+      doc.text(`- ${t}: ${c} ocorrencia(s)`, marginX, y);
       y += 14;
+    });
+    y += 8;
+  }
+
+  const sortedLogs = logs.slice().sort((a,b)=> new Date(b.date) - new Date(a.date)).slice(0, 30);
+  if(sortedLogs.length){
+    if(y > 700){ doc.addPage(); y = 50; }
+    doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(17,24,39);
+    doc.text(`Log de requisicoes (${sortedLogs.length})`, marginX, y); y += 14;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(55,65,81);
+    sortedLogs.forEach(l => {
+      if(y > 800){ doc.addPage(); y = 50; }
+      const d = new Date(l.date);
+      const dateStr = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}) +
+                      ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+      doc.text(`${dateStr}  -  ${(l.user||'-').slice(0,20)}  -  ${l.status}  -  ${l.fallbackScore}%  -  ${l.timeSaved||0}min`, marginX, y);
+      y += 12;
     });
   }
 
-  doc.save(`painel-impacto-lead-${new Date().toISOString().slice(0,10)}.pdf`);
-};
+  doc.save(`painel-impacto-${scopeSuffix()}-${new Date().toISOString().slice(0,10)}.pdf`);
+}
+
+// Toggle do menu
+(function wireExportMenu(){
+  const btn = $('btn-export-menu');
+  if(!btn) return;
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    if(!isAdmin) return;
+    const pop = ensureExportPopup();
+    const isOpen = pop.classList.contains('open');
+    if(isOpen){ pop.classList.remove('open'); return; }
+    pop.classList.add('open');
+    positionExportPopup();
+  };
+  document.addEventListener('click', (e) => {
+    const pop = document.getElementById('an-export-pop');
+    if(!pop) return;
+    if(pop.contains(e.target) || e.target === btn || btn.contains(e.target)) return;
+    pop.classList.remove('open');
+  });
+  window.addEventListener('resize', () => {
+    const pop = document.getElementById('an-export-pop');
+    if(pop && pop.classList.contains('open')) positionExportPopup();
+  });
+  window.addEventListener('scroll', () => {
+    const pop = document.getElementById('an-export-pop');
+    if(pop && pop.classList.contains('open')) positionExportPopup();
+  }, true);
+})();
 </script>
 </body>
 </html>
