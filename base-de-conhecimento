@@ -5,7 +5,7 @@ P: Como funciona a solicitação de boletos e extratos?
 R: Gere um ticket conforme a sua necessidade através do Portal. O retorno será via WhatsApp dentro da SLA informada no ticket.
 
 P: Como abro um ticket no portal?
-R: Acesse "Ferramentas" > "Novo ticket - GRE", preencha título, descrição e prioridade e clique em "Criar". Você receberá um número de protocolo por e-mail.
+R: Acesse "Portal" > "Novo ticket - GRE", preencha título, descrição e prioridade e clique em "Criar". Você receberá um número de protocolo por e-mail.
 
 P: Como acompanho um ticket aberto?
 R: Acesse "Acompanhar Solicitação" no portal. Você verá todos os tickets com filtros de status: Aberto, em andamento e resolvido.
@@ -98,3 +98,21 @@ R: O acordo é cancelado e a cota permanece com as parcelas em aberto, podendo c
 
 P: Qual o prazo para a baixa do pagamento após quitar o boleto?
 R: Após o pagamento, a baixa bancária leva de 2 a 3 dias úteis para ser processada. Por isso, o envio do comprovante é importante para acompanhamento.
+
+P: Meu cliente quer transferir a cota. Como faço?
+R: Segue link abaixo para inicio do processo:
+Esse link é a esteira digital onde será anexado todos os documentos de forma online pelo cliente e o prazo de tratativa das pendencias são de cerca de *48h corridas antes que se encerre o protocolo.*
+
+https://webapp.tech4h.com.br/porto/consorcio/login/validar-documento
+ - A taxa de transferência de cota contemplada é de 1% do crédito.
+
+P: Qual o contato da central?
+R: É possível contato da Central de Relacionamento, pelo canais:
+
+CHAT https://www.portoseguro.com.br/fale-conosco/contatos/chat
+Whatsapp 11 3003 9303 (sem o número 9 na frente)
+ou telefone 0800 721 3006 ou 113366 3006
+Horário das 8h as 20h
+
+P: Podemos ajudar o cliente a trocar a forma de pagamento de cartão para boleto?
+R: Não. Somente ligando na central da Porto. Internamente só conseguimos enviar link de cartão ao cliente.
